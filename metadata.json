@@ -1,0 +1,6 @@
+{
+  "name": "VidFast Link Generator",
+  "description": "Search for movies and TV shows to generate embeddable VidFast links. Instantly find content and get direct links to stream.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}
