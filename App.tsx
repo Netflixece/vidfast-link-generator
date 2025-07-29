@@ -1,4 +1,5 @@
 
+
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import SearchBar from './components/SearchBar';
 import ResultsGrid from './components/ResultsGrid';
@@ -305,7 +306,7 @@ const App: React.FC = () => {
                     </div>
                 ) : (
                     // Home Screen View
-                    <div className="mt-8">
+                    <div className="mt-4">
                         {continueWatchingList.length > 0 ? (
                             <ContinueWatchingGrid 
                                 items={continueWatchingList} 
@@ -314,7 +315,7 @@ const App: React.FC = () => {
                             />
                         ) : (
                             !isLoading && !error && (
-                                <div className="text-center text-neutral-500 py-16 px-4">
+                                <div className="text-center text-neutral-500 mb-64">
                                     <h2 className="text-2xl font-semibold mb-2 text-white">Welcome!</h2>
                                     <p className="text-lg">Start by searching for a movie or TV show above.</p>
                                 </div>
