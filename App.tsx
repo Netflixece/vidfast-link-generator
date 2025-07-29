@@ -6,11 +6,13 @@ import EmbedLinkModal from './components/EmbedLinkModal';
 import ContinueWatchingGrid from './components/ContinueWatchingGrid';
 import UpdateFromLink from './components/UpdateFromLink';
 import ConfirmationModal from './components/ConfirmationModal';
+import HowToUseGuide from './components/HowToUseGuide';
 import { searchMulti, getTvDetails, getMovieDetails, getSeasonDetails, getImages } from './services/tmdb';
 import { getContinueWatchingList, saveToContinueWatching, removeFromContinueWatching } from './services/storage';
 import type { SearchResult, WatchProgressItem, WatchProgress, TVSearchResult, Episode, MovieSearchResult } from './types';
 
 const App: React.FC = () => {
+  const [view, setView] = useState<'home' | 'how-to-use'>('home');
   const [submittedQuery, setSubmittedQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -232,6 +234,7 @@ const App: React.FC = () => {
     setSelectedItem(null);
     setIsLoading(false);
     setSearchBarKey(Date.now());
+    setView('home');
   }, []);
 
   const isItemSelectedAndSaved = selectedItem ? continueWatchingList.some(i => i.media.id === selectedItem.id && i.media.media_type === selectedItem.media_type) : false;
@@ -257,58 +260,72 @@ const App: React.FC = () => {
         <p className="text-lg text-neutral-400 max-w-2xl mx-auto mt-2">
             Quickly find any movie or TV show and generate a direct VidFast streaming link.
         </p>
+         <button
+          onClick={() => setView('how-to-use')}
+          className="text-netflix-red hover:underline mt-2 text-md"
+        >
+          How to use this site
+        </button>
       </header>
       
-      <div className="sticky top-0 z-10 py-4 bg-black/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4">
-          <SearchBar 
-            key={searchBarKey}
-            onSearch={handleSearch} 
-            isLoading={isLoading} 
-          />
+      {view === 'home' && (
+        <div className="sticky top-0 z-10 py-4 bg-black/80 backdrop-blur-sm">
+            <div className="container mx-auto px-4">
+            <SearchBar 
+                key={searchBarKey}
+                onSearch={handleSearch} 
+                isLoading={isLoading} 
+            />
+            </div>
         </div>
-      </div>
+      )}
 
       <main className="container mx-auto px-4 pb-16">
-        {hasSearched ? (
-            // Search Results View
-            <div className="mt-8">
-                {isLoading && !results.length && (
-                <div className="flex justify-center items-center py-16" aria-label="Loading content">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-netflix-red"></div>
-                </div>
-                )}
-                {!isLoading && error && (
-                <p className="text-center text-red-400 text-lg py-16" role="alert">{error}</p>
-                )}
-                {results.length > 0 && (
-                <ResultsGrid results={results} onSelect={handleSelectFromSearch} />
-                )}
-                {!isLoading && !error && hasSearched && results.length === 0 && (
-                <p className="text-center text-neutral-500 text-lg py-16">No results found for "{submittedQuery}".</p>
-                )}
-            </div>
+        {view === 'how-to-use' ? (
+            <HowToUseGuide onGoBack={() => setView('home')} />
         ) : (
-            // Home Screen View
-            <div className="mt-8">
-                {continueWatchingList.length > 0 ? (
-                    <>
-                        <ContinueWatchingGrid 
-                            items={continueWatchingList} 
-                            onSelect={handleSelectFromContinueWatching}
-                            onRemove={handleRemoveProgress}
-                        />
-                        <UpdateFromLink onUpdate={handleUpdateFromLink} />
-                    </>
-                ) : (
-                    !isLoading && !error && (
-                        <div className="text-center text-neutral-500 py-16 px-4">
-                            <h2 className="text-2xl font-semibold mb-2 text-white">Welcome!</h2>
-                            <p className="text-lg">Start by searching for a movie or TV show above.</p>
+            <>
+                {hasSearched ? (
+                    // Search Results View
+                    <div className="mt-8">
+                        {isLoading && !results.length && (
+                        <div className="flex justify-center items-center py-16" aria-label="Loading content">
+                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-netflix-red"></div>
                         </div>
-                    )
+                        )}
+                        {!isLoading && error && (
+                        <p className="text-center text-red-400 text-lg py-16" role="alert">{error}</p>
+                        )}
+                        {results.length > 0 && (
+                        <ResultsGrid results={results} onSelect={handleSelectFromSearch} />
+                        )}
+                        {!isLoading && !error && hasSearched && results.length === 0 && (
+                        <p className="text-center text-neutral-500 text-lg py-16">No results found for "{submittedQuery}".</p>
+                        )}
+                    </div>
+                ) : (
+                    // Home Screen View
+                    <div className="mt-8">
+                        {continueWatchingList.length > 0 ? (
+                            <>
+                                <ContinueWatchingGrid 
+                                    items={continueWatchingList} 
+                                    onSelect={handleSelectFromContinueWatching}
+                                    onRemove={handleRemoveProgress}
+                                />
+                                <UpdateFromLink onUpdate={handleUpdateFromLink} />
+                            </>
+                        ) : (
+                            !isLoading && !error && (
+                                <div className="text-center text-neutral-500 py-16 px-4">
+                                    <h2 className="text-2xl font-semibold mb-2 text-white">Welcome!</h2>
+                                    <p className="text-lg">Start by searching for a movie or TV show above.</p>
+                                </div>
+                            )
+                        )}
+                    </div>
                 )}
-            </div>
+            </>
         )}
       </main>
 
