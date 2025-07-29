@@ -1,4 +1,3 @@
-
 import type { WatchProgressItem, SearchResult, WatchProgress } from '../types';
 
 const STORAGE_KEY = 'vidfast_continue_watching';
@@ -43,4 +42,45 @@ export const removeFromContinueWatching = (id: number, media_type: 'movie' | 'tv
     let list = getContinueWatchingList();
     list = list.filter(i => !(i.media.id === id && i.media.media_type === media_type));
     localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+};
+
+export const exportContinueWatchingList = () => {
+    const list = getContinueWatchingList();
+    const dataStr = JSON.stringify(list, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    const date = new Date().toISOString().slice(0, 10);
+    link.download = `vidfast-history-${date}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+};
+
+export const importContinueWatchingList = (jsonContent: string): Promise<WatchProgressItem[]> => {
+    return new Promise((resolve, reject) => {
+        try {
+            const parsedData = JSON.parse(jsonContent);
+            // Basic validation
+            if (!Array.isArray(parsedData)) {
+                throw new Error("Imported file is not a valid list.");
+            }
+            // A more detailed validation could be added here to check item structure
+            const validatedList: WatchProgressItem[] = parsedData.filter(item => 
+                item && typeof item === 'object' && 'media' in item && 'progress' in item && 'savedAt' in item
+            );
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(validatedList));
+            resolve(validatedList.sort((a,b) => b.savedAt - a.savedAt));
+        } catch (error) {
+            console.error("Failed to import continue watching list", error);
+            reject(error instanceof Error ? error : new Error('Failed to parse or validate the imported file.'));
+        }
+    });
+};
+
+export const resetSiteData = (): void => {
+    localStorage.removeItem(STORAGE_KEY);
 };
