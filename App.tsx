@@ -307,14 +307,11 @@ const App: React.FC = () => {
                     // Home Screen View
                     <div className="mt-8">
                         {continueWatchingList.length > 0 ? (
-                            <>
-                                <ContinueWatchingGrid 
-                                    items={continueWatchingList} 
-                                    onSelect={handleSelectFromContinueWatching}
-                                    onRemove={handleRemoveProgress}
-                                />
-                                <UpdateFromLink onUpdate={handleUpdateFromLink} />
-                            </>
+                            <ContinueWatchingGrid 
+                                items={continueWatchingList} 
+                                onSelect={handleSelectFromContinueWatching}
+                                onRemove={handleRemoveProgress}
+                            />
                         ) : (
                             !isLoading && !error && (
                                 <div className="text-center text-neutral-500 py-16 px-4">
@@ -323,6 +320,8 @@ const App: React.FC = () => {
                                 </div>
                             )
                         )}
+                        {/* Always show the update from link component on the home screen */}
+                        <UpdateFromLink onUpdate={handleUpdateFromLink} />
                     </div>
                 )}
             </>
