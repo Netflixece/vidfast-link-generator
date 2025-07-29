@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { SearchIcon, FilmIcon, TvIcon, BookmarkIcon, ExternalLinkIcon } from './Icons';
 
@@ -50,7 +51,7 @@ const HowToUseGuide: React.FC<HowToUseGuideProps> = ({ onGoBack }) => {
                 <div className="ml-9 bg-neutral-800 p-4 rounded-lg">
                     <p className="flex items-center text-white font-semibold mb-2">
                         <BookmarkIcon className="w-5 h-5 mr-2"/>
-                        Open Link & Save Progress
+                        Open Link in New Tab & Save to Continue Watching
                     </p>
                     <p className="text-neutral-300">
                         Clicking this button opens the streaming link and adds the item to your "Continue Watching" list on the homepage. For TV shows, it saves the specific season and episode you selected.
@@ -59,7 +60,7 @@ const HowToUseGuide: React.FC<HowToUseGuideProps> = ({ onGoBack }) => {
                  <div className="ml-9 bg-neutral-800 p-4 rounded-lg mt-4">
                     <p className="flex items-center text-white font-semibold mb-2">
                         <ExternalLinkIcon className="w-5 h-5 mr-2"/>
-                        Open Link in New Tab
+                        Open Link in New Tab (without saving to Continue Watching)
                     </p>
                     <p className="text-neutral-300">
                         If you just want to watch without saving, use this option. It will simply open the link without adding it to your list.
