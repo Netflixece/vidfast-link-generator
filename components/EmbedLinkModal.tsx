@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect, useMemo } from 'react';
 import type { SearchResult, TVDetails, WatchProgress, SeasonDetails } from '../types';
 import { getTvDetails, getSeasonDetails, getImages } from '../services/tmdb';
@@ -98,11 +99,12 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onSave, 
 
 
   const embedLink = useMemo(() => {
+    const themeParam = '&theme=E50914';
     if (item.media_type === 'movie') {
-      return `${VIDFAST_MOVIE_URL}${item.id}?autoPlay=true`;
+      return `${VIDFAST_MOVIE_URL}${item.id}?autoPlay=true${themeParam}`;
     }
     if (item.media_type === 'tv' && tvDetails) {
-      return `${VIDFAST_TV_URL}${item.id}/${selectedSeason}/${selectedEpisode}?autoPlay=true&nextButton=true&autoNext=true`;
+      return `${VIDFAST_TV_URL}${item.id}/${selectedSeason}/${selectedEpisode}?autoPlay=true&nextButton=true&autoNext=true${themeParam}`;
     }
     return '';
   }, [item, tvDetails, selectedSeason, selectedEpisode]);
