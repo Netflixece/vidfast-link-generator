@@ -18,7 +18,7 @@ const UpdateFromLink: React.FC<{ onUpdate: (url: string) => void }> = ({ onUpdat
                 Add or Update from Link
             </h3>
             <p className="text-neutral-400 mb-4">
-                Paste a VidFast link for any movie or episode. We'll add it to your list or update your progress if it's already there.
+                Paste a VidFast link for any movie or episode. We'll add it to your Continue Watching list or update your progress if it's already there.
             </p>
             <form onSubmit={handleSubmit} className="relative">
                 <input
