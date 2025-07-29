@@ -1,5 +1,3 @@
-
-
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import SearchBar from './components/SearchBar';
 import ResultsGrid from './components/ResultsGrid';
@@ -8,8 +6,10 @@ import ContinueWatchingGrid from './components/ContinueWatchingGrid';
 import UpdateFromLink from './components/UpdateFromLink';
 import ConfirmationModal from './components/ConfirmationModal';
 import HowToUseGuide from './components/HowToUseGuide';
+import ProfileMenu from './components/ProfileMenu';
+import ResetConfirmationModal from './components/ResetConfirmationModal';
 import { searchMulti, getTvDetails, getMovieDetails, getSeasonDetails, getImages } from './services/tmdb';
-import { getContinueWatchingList, saveToContinueWatching, removeFromContinueWatching } from './services/storage';
+import { getContinueWatchingList, saveToContinueWatching, removeFromContinueWatching, exportContinueWatchingList, importContinueWatchingList, resetSiteData } from './services/storage';
 import type { SearchResult, WatchProgressItem, WatchProgress, TVSearchResult, Episode, MovieSearchResult } from './types';
 
 const App: React.FC = () => {
@@ -24,6 +24,7 @@ const App: React.FC = () => {
   const [searchBarKey, setSearchBarKey] = useState(Date.now());
   const [continueWatchingList, setContinueWatchingList] = useState<WatchProgressItem[]>([]);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [confirmationState, setConfirmationState] = useState<{
     isOpen: boolean;
     itemToAdd: SearchResult | null;
@@ -238,10 +239,61 @@ const App: React.FC = () => {
     setView('home');
   }, []);
 
+  const handleExport = () => {
+    exportContinueWatchingList();
+    setFeedback("Continue Watching list exported successfully.");
+  };
+
+  const handleImport = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        const text = e.target?.result;
+        if (typeof text === 'string') {
+            try {
+                await importContinueWatchingList(text);
+                refreshContinueWatchingList();
+                setFeedback("List imported successfully!");
+            } catch (err) {
+                setFeedback(err instanceof Error ? err.message : "Failed to import list.");
+            }
+        }
+    };
+    reader.onerror = () => {
+        setFeedback("Error reading the import file.");
+    };
+    reader.readAsText(file);
+  };
+
+  const handleReset = () => {
+    setIsResetModalOpen(true);
+  };
+
+  const handleConfirmReset = () => {
+    resetSiteData();
+    refreshContinueWatchingList();
+    setIsResetModalOpen(false);
+    setFeedback("Site has been reset.");
+    // also clear search state
+    setResults([]);
+    setSubmittedQuery('');
+    setHasSearched(false);
+    setError(null);
+    setSelectedItem(null);
+    setSearchBarKey(Date.now());
+  };
+
   const isItemSelectedAndSaved = selectedItem ? continueWatchingList.some(i => i.media.id === selectedItem.id && i.media.media_type === selectedItem.media_type) : false;
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans">
+    <div className="min-h-screen bg-black text-white font-sans relative">
+      <div className="absolute top-4 right-4 md:top-6 md:right-8 z-20">
+        <ProfileMenu
+          onImport={handleImport}
+          onExport={handleExport}
+          onReset={handleReset}
+        />
+      </div>
+
       <header className="py-8 px-4 text-center">
         <h1
           className="text-6xl md:text-7xl font-heading tracking-wider text-netflix-red uppercase cursor-pointer hover:text-netflix-red-dark transition-colors duration-300"
@@ -349,6 +401,12 @@ const App: React.FC = () => {
         episodeDetails={confirmationState.episodeDetails}
         onConfirm={confirmationState.onConfirm}
         onCancel={handleCloseConfirmation}
+      />
+
+      <ResetConfirmationModal
+        isOpen={isResetModalOpen}
+        onConfirm={handleConfirmReset}
+        onCancel={() => setIsResetModalOpen(false)}
       />
 
       {feedback && (
