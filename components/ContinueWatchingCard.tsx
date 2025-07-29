@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { TMDB_IMAGE_BASE_URL } from '../constants';
+import { TMDB_IMAGE_BASE_URL, VIDFAST_MOVIE_URL, VIDFAST_TV_URL } from '../constants';
 import type { WatchProgressItem } from '../types';
 import { TrashIcon, PlayIcon } from './Icons';
 
@@ -22,6 +22,22 @@ const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({ item, onSel
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation();
     onRemove(media.id, media.media_type);
+  };
+
+  const handlePlayClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const themeParam = '&theme=E50914';
+    let link = null;
+
+    if (media.media_type === 'movie') {
+      link = `${VIDFAST_MOVIE_URL}${media.id}?autoPlay=true${themeParam}`;
+    } else if (media.media_type === 'tv' && progress.season && progress.episode) {
+      link = `${VIDFAST_TV_URL}${media.id}/${progress.season}/${progress.episode}?autoPlay=true&nextButton=true&autoNext=true${themeParam}`;
+    }
+
+    if (link) {
+      window.open(link, '_blank', 'noopener,noreferrer');
+    }
   };
   
   let progressText = '';
@@ -47,7 +63,7 @@ const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({ item, onSel
             <p className="text-sm text-neutral-300">{progressText}</p>
         </div>
       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-3">
-        <button onClick={() => onSelect(item)} className="bg-white/90 text-black rounded-full p-4 hover:bg-white hover:scale-110 transition-transform mb-4" aria-label={`Resume ${title}`}>
+        <button onClick={handlePlayClick} className="bg-white/90 text-black rounded-full p-4 hover:bg-white hover:scale-110 transition-transform mb-4" aria-label={`Resume ${title}`}>
             <PlayIcon className="w-6 h-6" />
         </button>
         <button onClick={handleRemove} className="absolute top-2 right-2 bg-black/70 text-white rounded-full p-2 hover:bg-netflix-red transition-colors" aria-label={`Remove ${title} from list`}>
