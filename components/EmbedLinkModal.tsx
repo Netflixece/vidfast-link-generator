@@ -209,13 +209,13 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onSave, 
                       </button>
                     </div>
                     <div className="flex flex-col mt-6 space-y-3">
-                      <a href={embedLink} target="_blank" rel="noopener noreferrer" onClick={handleOpenAndSave} className="w-full flex items-center justify-center bg-netflix-red hover:bg-netflix-red-dark text-white font-bold py-3 px-4 rounded-md transition-colors">
-                        <BookmarkIcon className="w-5 h-5 mr-2" />
-                        Open Link & Save Progress
+                      <a href={embedLink} target="_blank" rel="noopener noreferrer" onClick={handleOpenAndSave} className="w-full flex items-center justify-center bg-netflix-red hover:bg-netflix-red-dark text-white font-bold py-3 px-4 rounded-md transition-colors text-center">
+                        <BookmarkIcon className="w-5 h-5 mr-2 flex-shrink-0" />
+                        Open Link in New Tab & Save to Continue Watching
                       </a>
-                      <a href={embedLink} target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center bg-neutral-700 hover:bg-neutral-600 text-white font-bold py-3 px-4 rounded-md transition-colors">
-                        <ExternalLinkIcon className="w-5 h-5 mr-2" />
-                        Open Link in New Tab
+                      <a href={embedLink} target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center bg-neutral-700 hover:bg-neutral-600 text-white font-bold py-3 px-4 rounded-md transition-colors text-center">
+                        <ExternalLinkIcon className="w-5 h-5 mr-2 flex-shrink-0" />
+                        Open Link in New Tab (without saving to Continue Watching)
                       </a>
                       {isSaved && (
                         <button onClick={handleRemove} className="w-full flex items-center justify-center bg-transparent border border-neutral-700 hover:bg-neutral-800 text-neutral-400 hover:text-white font-bold py-2 px-3 rounded-md transition-colors" title="Remove from Continue Watching">
@@ -340,20 +340,20 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onSave, 
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={handleOpenAndSave}
-                        className="w-full flex items-center justify-center bg-netflix-red hover:bg-netflix-red-dark text-white font-bold py-3 px-4 rounded-md transition-colors"
+                        className="w-full flex items-center justify-center bg-netflix-red hover:bg-netflix-red-dark text-white font-bold py-3 px-4 rounded-md transition-colors text-center"
                       >
-                        <BookmarkIcon className="w-5 h-5 mr-2" />
-                        Open Link & Save Progress
+                        <BookmarkIcon className="w-5 h-5 mr-2 flex-shrink-0" />
+                        Open Link in New Tab & Save to Continue Watching
                       </a>
                       
                       <a
                         href={embedLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full flex items-center justify-center bg-neutral-700 hover:bg-neutral-600 text-white font-bold py-3 px-4 rounded-md transition-colors"
+                        className="w-full flex items-center justify-center bg-neutral-700 hover:bg-neutral-600 text-white font-bold py-3 px-4 rounded-md transition-colors text-center"
                       >
-                        <ExternalLinkIcon className="w-5 h-5 mr-2" />
-                        Open Link in New Tab
+                        <ExternalLinkIcon className="w-5 h-5 mr-2 flex-shrink-0" />
+                        Open Link in New Tab (without saving to Continue Watching)
                       </a>
 
                       {isSaved && item.media_type === 'tv' && (
