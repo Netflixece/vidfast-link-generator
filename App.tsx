@@ -286,7 +286,7 @@ const App: React.FC = () => {
   const isItemSelectedAndSaved = selectedItem ? continueWatchingList.some(i => i.media.id === selectedItem.id && i.media.media_type === selectedItem.media_type) : false;
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans">
+    <div className="min-h-screen bg-black text-white">
       <header className="py-8 px-4 text-center relative">
         <div className="absolute top-10 right-6 md:right-10">
             <ProfileMenu
@@ -296,7 +296,7 @@ const App: React.FC = () => {
             />
         </div>
         <h1
-          className="text-6xl md:text-7xl font-heading tracking-wider text-netflix-red uppercase cursor-pointer hover:text-netflix-red-dark transition-colors duration-300"
+          className="text-6xl md:text-7xl font-bold tracking-wider text-netflix-red uppercase cursor-pointer hover:text-netflix-red-dark transition-colors duration-300"
           onClick={handleGoHome}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
