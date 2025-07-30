@@ -1,5 +1,4 @@
 
-
 import React from 'react';
 import type { WatchProgressItem } from '../types';
 import ContinueWatchingCard from './ContinueWatchingCard';
@@ -8,9 +7,10 @@ interface ContinueWatchingGridProps {
   items: WatchProgressItem[];
   onSelect: (item: WatchProgressItem) => void;
   onRemove: (id: number, media_type: 'movie' | 'tv') => void;
+  playerTheme: string;
 }
 
-const ContinueWatchingGrid: React.FC<ContinueWatchingGridProps> = ({ items, onSelect, onRemove }) => {
+const ContinueWatchingGrid: React.FC<ContinueWatchingGridProps> = ({ items, onSelect, onRemove, playerTheme }) => {
   return (
     <div>
         <h2 className="text-2xl tracking-wider text-white mb-6">Continue Watching</h2>
@@ -24,7 +24,8 @@ const ContinueWatchingGrid: React.FC<ContinueWatchingGridProps> = ({ items, onSe
                 <ContinueWatchingCard 
                     item={item} 
                     onSelect={onSelect}
-                    onRemove={onRemove} 
+                    onRemove={onRemove}
+                    playerTheme={playerTheme}
                 />
             </div>
           ))}
