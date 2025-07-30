@@ -1,12 +1,14 @@
 
-import React, { useState } from 'react';
 
-const UpdateFromLink: React.FC<{ onUpdate: (url: string) => void }> = ({ onUpdate }) => {
+import React, { useState } from 'react';
+import { SpinnerIcon } from './Icons';
+
+const UpdateFromLink: React.FC<{ onUpdate: (url: string) => void; isUpdating: boolean }> = ({ onUpdate, isUpdating }) => {
     const [url, setUrl] = useState('');
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (url.trim()) {
+        if (url.trim() && !isUpdating) {
             onUpdate(url);
             setUrl('');
         }
@@ -26,16 +28,16 @@ const UpdateFromLink: React.FC<{ onUpdate: (url: string) => void }> = ({ onUpdat
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
                     placeholder="Paste VidFast link here..."
-                    className="w-full pl-5 pr-28 py-3 text-base bg-neutral-800 text-white border-2 border-neutral-700 rounded-full focus:outline-none focus:ring-2 focus:ring-netflix-red focus:border-netflix-red transition-colors"
+                    className="w-full pl-5 pr-32 py-3 text-base bg-neutral-800 text-white border-2 border-neutral-700 rounded-full focus:outline-none focus:ring-2 focus:ring-netflix-red focus:border-netflix-red transition-colors"
                 />
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2">
                     <button
                         type="submit"
-                        className="bg-netflix-red hover:bg-netflix-red-dark text-white font-bold py-2 px-5 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        disabled={!url.trim()}
+                        className="bg-netflix-red hover:bg-netflix-red-dark text-white font-bold py-2 px-5 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center w-24"
+                        disabled={!url.trim() || isUpdating}
                         aria-label="Update progress from link"
                     >
-                        Update
+                        {isUpdating ? <SpinnerIcon className="w-5 h-5" /> : 'Update'}
                     </button>
                 </div>
             </form>
