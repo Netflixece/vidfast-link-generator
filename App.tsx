@@ -1,4 +1,5 @@
 
+
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import SearchBar from './components/SearchBar';
 import ResultsGrid from './components/ResultsGrid';
@@ -12,6 +13,7 @@ import ResetConfirmationModal from './components/ResetConfirmationModal';
 import { searchMulti, getTvDetails, getMovieDetails, getSeasonDetails, getImages } from './services/tmdb';
 import { getContinueWatchingList, saveToContinueWatching, removeFromContinueWatching, exportContinueWatchingList, importContinueWatchingList, resetSiteData } from './services/storage';
 import type { SearchResult, WatchProgressItem, WatchProgress, TVSearchResult, Episode, MovieSearchResult } from './types';
+import { FilmIcon, TvIcon } from './components/Icons';
 
 const App: React.FC = () => {
   const [view, setView] = useState<'home' | 'how-to-use'>('home');
@@ -26,6 +28,7 @@ const App: React.FC = () => {
   const [continueWatchingList, setContinueWatchingList] = useState<WatchProgressItem[]>([]);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+  const [isUpdatingFromLink, setIsUpdatingFromLink] = useState(false);
   const [confirmationState, setConfirmationState] = useState<{
     isOpen: boolean;
     itemToAdd: SearchResult | null;
@@ -125,6 +128,9 @@ const App: React.FC = () => {
   };
 
   const handleUpdateFromLink = async (url: string) => {
+    if (isUpdatingFromLink) return;
+    setIsUpdatingFromLink(true);
+
     const tvRegex = /vidfast\.pro\/tv\/(\d+)\/(\d+)\/(\d+)/;
     const movieRegex = /vidfast\.pro\/movie\/(\d+)/;
 
@@ -182,6 +188,7 @@ const App: React.FC = () => {
                 setFeedback("Could not find details for the TV show in the link.");
             }
         }
+        setIsUpdatingFromLink(false);
         return;
     }
 
@@ -221,10 +228,12 @@ const App: React.FC = () => {
               setFeedback("Could not find details for the movie in the link.");
             }
         }
+        setIsUpdatingFromLink(false);
         return;
     }
-
+    
     setFeedback('Invalid or unrecognized VidFast link format.');
+    setIsUpdatingFromLink(false);
   };
 
 
@@ -315,9 +324,9 @@ const App: React.FC = () => {
         </p>
          <button
           onClick={() => setView('how-to-use')}
-          className="text-netflix-red hover:underline mt-2 text-md"
+          className="mt-4 text-netflix-red border border-netflix-red/50 rounded-full px-5 py-2 text-md transition-colors hover:bg-netflix-red/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-netflix-red"
         >
-          How to use this site
+          How It Works
         </button>
       </header>
       
@@ -333,52 +342,61 @@ const App: React.FC = () => {
         </div>
       )}
 
-      <main className="container mx-auto px-4 pb-16">
-        {view === 'how-to-use' ? (
-            <HowToUseGuide onGoBack={() => setView('home')} />
-        ) : (
-            <>
-                {hasSearched ? (
-                    // Search Results View
-                    <div className="mt-8">
-                        {isLoading && !results.length && (
-                        <div className="flex justify-center items-center py-16" aria-label="Loading content">
-                            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-netflix-red"></div>
-                        </div>
-                        )}
-                        {!isLoading && error && (
-                        <p className="text-center text-red-400 text-lg py-16" role="alert">{error}</p>
-                        )}
-                        {results.length > 0 && (
-                        <ResultsGrid results={results} onSelect={handleSelectFromSearch} />
-                        )}
-                        {!isLoading && !error && hasSearched && results.length === 0 && (
-                        <p className="text-center text-neutral-500 text-lg py-16">No results found for "{submittedQuery}".</p>
-                        )}
-                    </div>
-                ) : (
-                    // Home Screen View
-                    <div className="mt-4">
-                        {continueWatchingList.length > 0 ? (
-                            <ContinueWatchingGrid 
-                                items={continueWatchingList} 
-                                onSelect={handleSelectFromContinueWatching}
-                                onRemove={handleRemoveProgress}
-                            />
-                        ) : (
-                            !isLoading && !error && (
-                                <div className="text-center text-neutral-500 mb-64">
-                                    <h2 className="text-2xl font-semibold mb-2 text-white">Welcome!</h2>
-                                    <p className="text-lg">Start by searching for a movie or TV show above.</p>
+      <main className="container mx-auto px-4 pb-16 min-h-[50vh]">
+        <div key={view} className="animate-fade-in">
+          {view === 'how-to-use' ? (
+              <HowToUseGuide onGoBack={() => setView('home')} />
+          ) : (
+              <>
+                  {hasSearched ? (
+                      <div className="mt-8">
+                          {isLoading && !results.length && (
+                          <div className="flex justify-center items-center py-16" aria-label="Loading content">
+                              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-netflix-red"></div>
+                          </div>
+                          )}
+                          {!isLoading && error && (
+                          <p className="text-center text-red-400 text-lg py-16" role="alert">{error}</p>
+                          )}
+                          {results.length > 0 && (
+                            <>
+                                <h2 className="text-3xl tracking-wider text-white mb-6">Results for "{submittedQuery}"</h2>
+                                <ResultsGrid results={results} onSelect={handleSelectFromSearch} />
+                            </>
+                          )}
+                          {!isLoading && !error && hasSearched && results.length === 0 && (
+                            <div className="text-center text-neutral-500 text-lg py-16">
+                                <p>No results found for "{submittedQuery}".</p>
+                                <p className="text-md text-neutral-600 mt-2">Try checking the spelling or searching for a different title.</p>
+                            </div>
+                          )}
+                      </div>
+                  ) : (
+                      <div className="mt-4">
+                          {continueWatchingList.length > 0 ? (
+                              <ContinueWatchingGrid 
+                                  items={continueWatchingList} 
+                                  onSelect={handleSelectFromContinueWatching}
+                                  onRemove={handleRemoveProgress}
+                              />
+                          ) : (
+                              !isLoading && !error && (
+                                <div className="text-center text-neutral-600 py-16 my-8">
+                                    <div className="flex justify-center items-center space-x-4 text-neutral-700">
+                                        <FilmIcon className="w-20 h-20 opacity-50 -rotate-12"/>
+                                        <TvIcon className="w-24 h-24 opacity-60 rotate-6"/>
+                                    </div>
+                                    <h2 className="text-3xl font-bold mt-8 mb-2 text-white">Your List is Empty</h2>
+                                    <p className="text-lg text-neutral-400">Search for a movie or show to get started.</p>
                                 </div>
-                            )
-                        )}
-                        {/* Always show the update from link component on the home screen */}
-                        <UpdateFromLink onUpdate={handleUpdateFromLink} />
-                    </div>
-                )}
-            </>
-        )}
+                              )
+                          )}
+                          <UpdateFromLink onUpdate={handleUpdateFromLink} isUpdating={isUpdatingFromLink} />
+                      </div>
+                  )}
+              </>
+          )}
+        </div>
       </main>
 
       {selectedItem && (
