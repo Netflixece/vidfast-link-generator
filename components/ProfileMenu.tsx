@@ -63,7 +63,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ onImport, onExport, onReset }
             </button>
             {isOpen && (
                 <div 
-                    className="absolute right-0 mt-2 w-56 origin-top-right bg-neutral-800 border border-neutral-700 rounded-md shadow-lg z-50 transition-all duration-150 ease-out transform opacity-100 scale-100"
+                    className="absolute right-0 mt-2 w-56 origin-top-right bg-neutral-800 border border-neutral-700 rounded-md shadow-lg z-50 animate-zoom-in-fast"
                     role="menu"
                     aria-orientation="vertical"
                     aria-labelledby="user-menu-button"
