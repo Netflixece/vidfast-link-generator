@@ -1,7 +1,7 @@
 
 
 import React from 'react';
-import { SearchIcon, FilmIcon, TvIcon, BookmarkIcon, ExternalLinkIcon } from './Icons';
+import { SearchIcon, FilmIcon, TvIcon, BookmarkIcon, ExternalLinkIcon, UploadIcon } from './Icons';
 
 interface HowToUseGuideProps {
     onGoBack: () => void;
@@ -23,7 +23,10 @@ const HowToUseGuide: React.FC<HowToUseGuideProps> = ({ onGoBack }) => {
             </section>
             
             <section className="mb-8">
-                <h3 className="text-2xl font-bold mb-3">2. Generate Your Link</h3>
+                <h3 className="text-2xl font-bold mb-3 flex items-center">
+                    <ExternalLinkIcon className="w-6 h-6 mr-3 text-netflix-red"/>
+                    2. Generate Your Link
+                </h3>
                 <div className="ml-9 space-y-4">
                     <div className="bg-neutral-800 p-4 rounded-lg">
                         <h4 className="font-semibold text-lg flex items-center mb-2"><FilmIcon className="w-5 h-5 mr-2"/>For Movies</h4>
@@ -69,7 +72,10 @@ const HowToUseGuide: React.FC<HowToUseGuideProps> = ({ onGoBack }) => {
             </section>
 
              <section className="mb-8">
-                <h3 className="text-2xl font-bold mb-3">4. Update from a Link</h3>
+                <h3 className="text-2xl font-bold mb-3 flex items-center">
+                    <UploadIcon className="w-6 h-6 mr-3 text-netflix-red"/>
+                    4. Update from a Link
+                </h3>
                 <div className="ml-9 text-neutral-300 space-y-2">
                    <p>
                         The "Add or Update from Link" tool on the homepage is powerful. Paste any VidFast movie or episode link here.
