@@ -67,14 +67,40 @@ export const importContinueWatchingList = (jsonContent: string): Promise<WatchPr
     return new Promise((resolve, reject) => {
         try {
             const parsedData = JSON.parse(jsonContent);
-            // Basic validation
+            
             if (!Array.isArray(parsedData)) {
                 throw new Error("Imported file is not a valid list.");
             }
-            // A more detailed validation could be added here to check item structure
-            const validatedList: WatchProgressItem[] = parsedData.filter(item => 
-                item && typeof item === 'object' && 'media' in item && 'progress' in item && 'savedAt' in item
-            );
+            
+            // A more detailed validation to check item structure
+            const validatedList: WatchProgressItem[] = parsedData.filter(item => {
+                if (!item || typeof item !== 'object') return false;
+                
+                const hasRequiredTopLevelKeys = 'media' in item && 'progress' in item && 'savedAt' in item;
+                if (!hasRequiredTopLevelKeys) return false;
+
+                const media = item.media;
+                if (!media || typeof media !== 'object') return false;
+
+                const hasRequiredMediaKeys = 'id' in media && 'media_type' in media;
+                if (!hasRequiredMediaKeys) return false;
+                
+                if (typeof media.id !== 'number') return false;
+                if (media.media_type !== 'movie' && media.media_type !== 'tv') return false;
+
+                // Check for title/name to avoid crashes in UI
+                if (media.media_type === 'movie' && typeof (media as any).title !== 'string') return false;
+                if (media.media_type === 'tv' && typeof (media as any).name !== 'string') return false;
+                
+                if (typeof item.savedAt !== 'number') return false;
+
+                return true;
+            });
+
+            if (validatedList.length < parsedData.length) {
+                console.warn("Some items in the imported file were invalid and have been skipped.");
+                // Optionally, provide user feedback about partial import success.
+            }
 
             localStorage.setItem(STORAGE_KEY, JSON.stringify(validatedList));
             resolve(validatedList.sort((a,b) => b.savedAt - a.savedAt));
