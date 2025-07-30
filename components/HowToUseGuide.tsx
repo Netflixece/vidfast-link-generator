@@ -10,7 +10,7 @@ interface HowToUseGuideProps {
 const HowToUseGuide: React.FC<HowToUseGuideProps> = ({ onGoBack }) => {
     return (
         <div className="max-w-4xl mx-auto bg-neutral-900/50 p-8 rounded-lg animate-fade-in-up">
-            <h2 className="text-4xl font-heading tracking-wider text-netflix-red mb-6 text-center">How It Works</h2>
+            <h2 className="text-4xl tracking-wider text-netflix-red mb-6 text-center">How It Works</h2>
             
             <section className="mb-8">
                 <h3 className="text-2xl font-bold mb-3 flex items-center">
