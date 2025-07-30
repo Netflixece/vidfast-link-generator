@@ -1,5 +1,4 @@
 
-
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import SearchBar from './components/SearchBar';
 import ResultsGrid from './components/ResultsGrid';
@@ -50,7 +49,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (feedback) {
-        const timer = setTimeout(() => setFeedback(null), 4000);
+        const timer = setTimeout(() => setFeedback(null), 5000); // Increased duration for better readability
         return () => clearTimeout(timer);
     }
   }, [feedback]);
@@ -133,6 +132,7 @@ const App: React.FC = () => {
 
     const tvRegex = /vidfast\.pro\/tv\/(\d+)\/(\d+)\/(\d+)/;
     const movieRegex = /vidfast\.pro\/movie\/(\d+)/;
+    const baseTvRegex = /vidfast\.pro\/tv\/(\d+)\/?($|\?.*)/; // Matches TV links without S/E
 
     const tvMatch = url.match(tvRegex);
     if (tvMatch) {
@@ -227,6 +227,21 @@ const App: React.FC = () => {
               console.error(err);
               setFeedback("Could not find details for the movie in the link.");
             }
+        }
+        setIsUpdatingFromLink(false);
+        return;
+    }
+    
+    const baseTvMatch = url.match(baseTvRegex);
+    if (baseTvMatch) {
+        const [, id] = baseTvMatch;
+        const mediaId = Number(id);
+        try {
+            const tvDetails = await getTvDetails(mediaId);
+            setFeedback(`The link you pasted is for '${tvDetails.name}' but is missing the Season and Episode. Please paste a valid link with Season and Episode to add.`);
+        } catch (err) {
+            console.error("Failed to fetch TV details for base link", err);
+            setFeedback("The pasted TV show link is invalid or the show could not be found.");
         }
         setIsUpdatingFromLink(false);
         return;
@@ -430,7 +445,7 @@ const App: React.FC = () => {
 
       {feedback && (
         <div 
-            className="fixed bottom-5 right-5 bg-neutral-800 border border-neutral-600 text-white p-4 rounded-lg shadow-2xl z-50 animate-fade-in-up"
+            className="fixed bottom-5 right-5 bg-neutral-800 border border-neutral-600 text-white p-4 rounded-lg shadow-2xl z-50 animate-fade-in-up max-w-sm"
             role="alert"
         >
             {feedback}
