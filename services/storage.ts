@@ -1,6 +1,10 @@
-import type { WatchProgressItem, SearchResult, WatchProgress } from '../types';
+
+import type { WatchProgressItem, SearchResult, WatchProgress, ColorInfo } from '../types';
+import { DEFAULT_THEME } from '../constants';
 
 const STORAGE_KEY = 'vidfast_continue_watching';
+const THEME_STORAGE_KEY = 'vidfast_player_theme';
+
 
 export const getContinueWatchingList = (): WatchProgressItem[] => {
     try {
@@ -81,6 +85,31 @@ export const importContinueWatchingList = (jsonContent: string): Promise<WatchPr
     });
 };
 
+export const getPlayerTheme = (): ColorInfo => {
+    try {
+        const rawData = localStorage.getItem(THEME_STORAGE_KEY);
+        if (!rawData) return DEFAULT_THEME;
+        const theme: ColorInfo = JSON.parse(rawData);
+        // basic validation
+        if (theme && typeof theme.name === 'string' && typeof theme.hex === 'string' && theme.hex.startsWith('#')) {
+            return theme;
+        }
+        return DEFAULT_THEME;
+    } catch (error) {
+        console.error("Failed to parse player theme from localStorage", error);
+        return DEFAULT_THEME;
+    }
+};
+
+export const setPlayerTheme = (theme: ColorInfo): void => {
+    try {
+        localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(theme));
+    } catch (error) {
+        console.error("Failed to save player theme to localStorage", error);
+    }
+};
+
 export const resetSiteData = (): void => {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(THEME_STORAGE_KEY);
 };
