@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import type { ColorInfo } from '../types';
 import { CloseIcon } from './Icons';
@@ -13,6 +12,11 @@ interface ThemeModalProps {
 
 const ThemeModal: React.FC<ThemeModalProps> = ({ isOpen, onClose, currentTheme, onThemeChange }) => {
     const [searchQuery, setSearchQuery] = useState('');
+
+    const presetNameOverrides: { [key: string]: string } = {
+        '#00A8E1': 'Prime Blue',
+        '#3DBB3D': 'Hulu Green',
+    };
 
     const filteredColors = useMemo(() => {
         if (!searchQuery.trim()) return [];
@@ -37,9 +41,9 @@ const ThemeModal: React.FC<ThemeModalProps> = ({ isOpen, onClose, currentTheme, 
                 onClick={e => e.stopPropagation()}
             >
                 {/* Header */}
-                <div className="p-6 flex justify-between items-center border-b border-neutral-700/50 flex-shrink-0">
+                <div className="p-6 flex justify-center items-center border-b border-neutral-700/50 flex-shrink-0 relative">
                     <h2 className="text-2xl font-bold">Player Theme</h2>
-                    <button onClick={onClose} className="text-neutral-500 hover:text-white transition-colors">
+                    <button onClick={onClose} className="absolute top-1/2 right-6 -translate-y-1/2 text-neutral-500 hover:text-white transition-colors">
                         <CloseIcon className="w-6 h-6" />
                     </button>
                 </div>
@@ -47,34 +51,39 @@ const ThemeModal: React.FC<ThemeModalProps> = ({ isOpen, onClose, currentTheme, 
                 {/* Content */}
                 <div className="p-6 flex-grow overflow-y-auto">
                     {/* Current Theme */}
-                    <div className="mb-8">
-                        <h3 className="text-lg font-semibold text-neutral-300 mb-3">Current Theme</h3>
-                        <div className="bg-neutral-800/80 p-4 rounded-lg flex items-center space-x-4">
-                            <div 
-                                className="w-8 h-8 rounded-full flex-shrink-0 border-2 border-white/20"
-                                style={{ backgroundColor: currentTheme.hex }}
-                            />
-                            <div>
-                                <p className="font-bold text-white">{currentTheme.name}</p>
-                                <p className="text-sm text-neutral-400 font-mono">{currentTheme.hex}</p>
-                            </div>
-                        </div>
+                    <div className="mb-8 flex items-center space-x-3">
+                        <h3 className="text-lg font-semibold text-neutral-300 flex-shrink-0">Current Theme:</h3>
+                        <div 
+                            className="w-7 h-7 rounded-full flex-shrink-0 border-2 border-white/20"
+                            style={{ backgroundColor: currentTheme.hex, border: currentTheme.hex === '#FFFFFF' ? '1px solid #4A5568' : 'none' }}
+                        />
+                        <p className="font-semibold text-white truncate">{currentTheme.name}</p>
+                        <p className="text-sm text-neutral-400 font-mono">{currentTheme.hex}</p>
                     </div>
 
                     {/* Predefined Themes */}
                     <div className="mb-8">
-                        <h3 className="text-lg font-semibold text-neutral-300 mb-3">Presets</h3>
-                        <div className="flex items-center space-x-4">
-                            {PREDEFINED_THEMES.map(theme => (
+                        <h3 className="text-lg font-semibold text-neutral-300 mb-4">Presets</h3>
+                        <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 text-center">
+                            {PREDEFINED_THEMES.map(theme => {
+                                const presetName = presetNameOverrides[theme.hex.toUpperCase()] || theme.name;
+                                return (
                                 <button
                                     key={theme.hex}
-                                    title={theme.name}
+                                    title={presetName}
                                     onClick={() => handleSelectTheme(theme)}
-                                    className={`w-10 h-10 rounded-full transition-transform transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-netflix-dark ${currentTheme.hex === theme.hex ? 'ring-2 ring-white' : 'ring-0'}`}
-                                    style={{ backgroundColor: theme.hex, border: theme.hex === '#FFFFFF' ? '1px solid #4A5568' : 'none' }}
-                                    aria-label={`Select ${theme.name} theme`}
-                                />
-                            ))}
+                                    className="flex flex-col items-center space-y-2 p-2 rounded-lg transition-colors hover:bg-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-netflix-dark focus:ring-netflix-red"
+                                    aria-label={`Select ${presetName} theme`}
+                                >
+                                    <div
+                                        className={`w-10 h-10 rounded-full transition-transform transform hover:scale-110 ${currentTheme.hex === theme.hex ? 'ring-2 ring-white' : ''}`}
+                                        style={{ backgroundColor: theme.hex, border: theme.hex === '#FFFFFF' ? '1px solid #4A5568' : 'none' }}
+                                    />
+                                    <span className="text-xs font-semibold text-white truncate w-full">{presetName}</span>
+                                    <span className="text-xs text-neutral-400 font-mono">{theme.hex}</span>
+                                </button>
+                                )
+                            })}
                         </div>
                     </div>
 
@@ -90,7 +99,7 @@ const ThemeModal: React.FC<ThemeModalProps> = ({ isOpen, onClose, currentTheme, 
                         />
                     </div>
                      {searchQuery.trim() && (
-                        <div className="mt-4 space-y-2 pr-2 overflow-y-auto max-h-[calc(100%-280px)]">
+                        <div className="mt-4 space-y-2 pr-2 overflow-y-auto max-h-[calc(100%-350px)]">
                             {filteredColors.length > 0 ? (
                                 filteredColors.map(color => (
                                     <div
