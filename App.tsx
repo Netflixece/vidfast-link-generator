@@ -10,10 +10,12 @@ import HowToUseGuide from './components/HowToUseGuide';
 import ProfileMenu from './components/ProfileMenu';
 import ResetConfirmationModal from './components/ResetConfirmationModal';
 import ScrollToTopButton from './components/ScrollToTopButton';
+import ThemeModal from './components/ThemeModal';
 import { searchMulti, getTvDetails, getMovieDetails, getSeasonDetails, getImages } from './services/tmdb';
-import { getContinueWatchingList, saveToContinueWatching, removeFromContinueWatching, exportContinueWatchingList, importContinueWatchingList, resetSiteData } from './services/storage';
-import type { SearchResult, WatchProgressItem, WatchProgress, TVSearchResult, Episode, MovieSearchResult } from './types';
+import { getContinueWatchingList, saveToContinueWatching, removeFromContinueWatching, exportContinueWatchingList, importContinueWatchingList, resetSiteData, getPlayerTheme, setPlayerTheme } from './services/storage';
+import type { SearchResult, WatchProgressItem, WatchProgress, TVSearchResult, Episode, MovieSearchResult, ColorInfo } from './types';
 import { FilmIcon, TvIcon, BookOpenIcon, CloseIcon } from './components/Icons';
+import { DEFAULT_THEME } from './constants';
 
 const App: React.FC = () => {
   const [view, setView] = useState<'home' | 'how-to-use'>('home');
@@ -30,6 +32,8 @@ const App: React.FC = () => {
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [isUpdatingFromLink, setIsUpdatingFromLink] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
+  const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
+  const [playerTheme, setPlayerTheme] = useState<ColorInfo>(DEFAULT_THEME);
   const [confirmationState, setConfirmationState] = useState<{
     isOpen: boolean;
     itemToAdd: SearchResult | null;
@@ -47,6 +51,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     setContinueWatchingList(getContinueWatchingList());
+    setPlayerTheme(getPlayerTheme());
   }, []);
 
   useEffect(() => {
@@ -310,6 +315,7 @@ const App: React.FC = () => {
   const handleConfirmReset = () => {
     resetSiteData();
     refreshContinueWatchingList();
+    setPlayerTheme(DEFAULT_THEME);
     setIsResetModalOpen(false);
     setFeedback("Site has been reset.");
     // also clear search state
@@ -319,6 +325,12 @@ const App: React.FC = () => {
     setError(null);
     setSelectedItem(null);
     setSearchBarKey(Date.now());
+  };
+
+  const handleThemeChange = (theme: ColorInfo) => {
+    setPlayerTheme(theme);
+    setPlayerTheme(theme);
+    setFeedback(`Player theme changed to ${theme.name}`);
   };
 
   const handleScrollToTop = () => {
@@ -335,6 +347,7 @@ const App: React.FC = () => {
               onImport={handleImport}
               onExport={handleExport}
               onReset={handleReset}
+              onThemeSelect={() => setIsThemeModalOpen(true)}
             />
         </div>
         <h1
@@ -421,6 +434,7 @@ const App: React.FC = () => {
                                   items={continueWatchingList} 
                                   onSelect={handleSelectFromContinueWatching}
                                   onRemove={handleRemoveProgress}
+                                  playerTheme={playerTheme.hex.replace('#', '')}
                               />
                           ) : (
                               !isLoading && !error && (
@@ -452,6 +466,7 @@ const App: React.FC = () => {
           setFeedback={setFeedback}
           isSaved={isItemSelectedAndSaved}
           initialProgress={selectedProgress}
+          playerTheme={playerTheme.hex.replace('#', '')}
         />
       )}
 
@@ -468,6 +483,13 @@ const App: React.FC = () => {
         isOpen={isResetModalOpen}
         onConfirm={handleConfirmReset}
         onCancel={() => setIsResetModalOpen(false)}
+      />
+
+      <ThemeModal
+        isOpen={isThemeModalOpen}
+        onClose={() => setIsThemeModalOpen(false)}
+        currentTheme={playerTheme}
+        onThemeChange={handleThemeChange}
       />
 
       {showScrollToTop && <ScrollToTopButton onClick={handleScrollToTop} />}
