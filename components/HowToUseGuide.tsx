@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { CloseIcon, SearchIcon, FilmIcon, TvIcon, BookmarkIcon, ExternalLinkIcon, UploadIcon } from './Icons';
+import { SearchIcon, FilmIcon, TvIcon, BookmarkIcon, ExternalLinkIcon, UploadIcon } from './Icons';
 
 interface HowToUseGuideProps {
     onGoBack: () => void;
@@ -9,13 +9,6 @@ interface HowToUseGuideProps {
 const HowToUseGuide: React.FC<HowToUseGuideProps> = ({ onGoBack }) => {
     return (
         <div className="max-w-4xl mx-auto bg-neutral-900/50 p-8 rounded-lg relative">
-            <button
-                onClick={onGoBack}
-                className="absolute top-10 right-6 text-neutral-500 hover:text-white transition-colors z-10"
-                aria-label="Close guide"
-            >
-                <CloseIcon className="w-7 h-7" />
-            </button>
             <h2 className="text-4xl font-bold text-netflix-red mb-6 text-center">Guide to Use This Site</h2>
             
             <section className="mb-8">
