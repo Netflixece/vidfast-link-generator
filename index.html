@@ -19,6 +19,27 @@
               'netflix-red-dark': '#B20710',
               'netflix-dark': '#121212',
               'netflix-gray': '#808080',
+            },
+            keyframes: {
+              'fade-in': {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              'fade-in-up': {
+                '0%': { opacity: '0', transform: 'translateY(1rem)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+              'zoom-in': {
+                '0%': { opacity: '0', transform: 'scale(0.97)' },
+                '100%': { opacity: '1', transform: 'scale(1)' },
+              },
+            },
+            animation: {
+              'fade-in': 'fade-in 0.5s ease-out forwards',
+              'fade-in-fast': 'fade-in 0.3s ease-out forwards',
+              'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
+              'zoom-in': 'zoom-in 0.3s ease-out forwards',
+              'zoom-in-fast': 'zoom-in 0.15s ease-out forwards',
             }
           }
         }
