@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { TMDB_IMAGE_BASE_URL, VIDFAST_MOVIE_URL, VIDFAST_TV_URL } from '../constants';
 import type { WatchProgressItem } from '../types';
@@ -50,26 +51,31 @@ const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({ item, onSel
   }
 
   return (
-    <div onClick={() => onSelect(item)} className="bg-netflix-dark rounded-md overflow-hidden shadow-lg transition-all duration-300 group relative cursor-pointer">
+    <div onClick={() => onSelect(item)} className="bg-netflix-dark rounded-md overflow-hidden shadow-lg group relative cursor-pointer transform hover:-translate-y-2 transition-transform duration-300">
       <img
         src={posterUrl}
         alt={`Poster for ${title}`}
-        className="w-full h-auto object-cover aspect-[2/3]"
+        className="w-full h-auto object-cover aspect-[2/3] group-hover:scale-105 transition-transform duration-300"
         loading="lazy"
       />
-       <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-black via-black/70 to-transparent pointer-events-none"></div>
-        <div className="absolute inset-x-0 bottom-0 p-3 text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.8)'}}>
-            <h3 className="font-bold truncate">{title}</h3>
-            <p className="text-sm text-neutral-300">{progressText}</p>
-        </div>
-      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center p-3">
-        <button onClick={handlePlayClick} className="bg-white/90 text-black rounded-full p-4 hover:bg-white hover:scale-110 transition-transform mb-4" aria-label={`Resume ${title}`}>
-            <PlayIcon className="w-6 h-6" />
-        </button>
-        <button onClick={handleRemove} className="absolute top-2 right-2 bg-black/70 text-white rounded-full p-2 hover:bg-netflix-red transition-colors" aria-label={`Remove ${title} from list`}>
-            <TrashIcon className="w-5 h-5" />
+      {/* Permanent gradient for text readability */}
+      <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black via-black/70 to-transparent pointer-events-none"></div>
+      {/* Permanent text */}
+      <div className="absolute inset-x-0 bottom-0 p-3 text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.8)'}}>
+          <h3 className="font-bold truncate">{title}</h3>
+          <p className="text-sm text-neutral-300">{progressText}</p>
+      </div>
+      
+      {/* Hover elements */}
+      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-3">
+        <button onClick={handlePlayClick} className="bg-white/20 backdrop-blur-sm border-2 border-white/50 text-white rounded-full p-3 hover:bg-white/30 transform hover:scale-110 transition-all" aria-label={`Resume ${title}`}>
+            <PlayIcon className="w-8 h-8" />
         </button>
       </div>
+
+      <button onClick={handleRemove} className="absolute top-2 right-2 bg-black/50 backdrop-blur-md text-white rounded-full p-2 hover:bg-netflix-red transition-colors opacity-0 group-hover:opacity-100 duration-300" aria-label={`Remove ${title} from list`}>
+        <TrashIcon className="w-5 h-5" />
+      </button>
     </div>
   );
 };
