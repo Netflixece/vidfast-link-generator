@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import type { WatchProgressItem } from '../types';
 import ContinueWatchingCard from './ContinueWatchingCard';
@@ -14,13 +15,18 @@ const ContinueWatchingGrid: React.FC<ContinueWatchingGridProps> = ({ items, onSe
     <div>
         <h2 className="text-3xl tracking-wider text-white mb-6">Continue Watching</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-          {items.map((item) => (
-            <ContinueWatchingCard 
-                key={`${item.media.media_type}-${item.media.id}`} 
-                item={item} 
-                onSelect={onSelect}
-                onRemove={onRemove} 
-            />
+          {items.map((item, index) => (
+            <div
+              key={`${item.media.media_type}-${item.media.id}`}
+              className="opacity-0 animate-fade-in-up"
+              style={{ animationDelay: `${index * 75}ms` }}
+            >
+                <ContinueWatchingCard 
+                    item={item} 
+                    onSelect={onSelect}
+                    onRemove={onRemove} 
+                />
+            </div>
           ))}
         </div>
     </div>
