@@ -288,7 +288,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-black text-white">
       <header className="py-8 px-4 text-center relative">
-        <div className="absolute top-10 right-6 md:right-10">
+        <div className="absolute top-12 right-6 md:right-10">
             <ProfileMenu
               onImport={handleImport}
               onExport={handleExport}
