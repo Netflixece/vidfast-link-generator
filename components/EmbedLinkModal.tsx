@@ -1,6 +1,4 @@
 
-
-
 import React, { useState, useEffect, useMemo } from 'react';
 import type { SearchResult, TVDetails, WatchProgress, SeasonDetails } from '../types';
 import { getTvDetails, getSeasonDetails, getImages } from '../services/tmdb';
@@ -16,9 +14,10 @@ interface EmbedLinkModalProps {
   setFeedback: (message: string) => void;
   isSaved: boolean;
   initialProgress?: WatchProgress;
+  playerTheme: string;
 }
 
-const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onSave, onRemove, onUpdateFromLink, setFeedback, isSaved, initialProgress }) => {
+const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onSave, onRemove, onUpdateFromLink, setFeedback, isSaved, initialProgress, playerTheme }) => {
   const [tvDetails, setTvDetails] = useState<TVDetails | null>(null);
   const [seasonDetails, setSeasonDetails] = useState<SeasonDetails | null>(null);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
@@ -100,7 +99,7 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onSave, 
 
 
   const embedLink = useMemo(() => {
-    const themeParam = '&theme=E50914';
+    const themeParam = `&theme=${playerTheme}`;
     if (item.media_type === 'movie') {
       return `${VIDFAST_MOVIE_URL}${item.id}?autoPlay=true${themeParam}`;
     }
@@ -108,7 +107,7 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onSave, 
       return `${VIDFAST_TV_URL}${item.id}/${selectedSeason}/${selectedEpisode}?autoPlay=true&nextButton=true&autoNext=true${themeParam}`;
     }
     return '';
-  }, [item, tvDetails, selectedSeason, selectedEpisode]);
+  }, [item, tvDetails, selectedSeason, selectedEpisode, playerTheme]);
 
   const handleCopy = () => {
     if (!embedLink) return;
