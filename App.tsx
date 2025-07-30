@@ -12,7 +12,7 @@ import ResetConfirmationModal from './components/ResetConfirmationModal';
 import ScrollToTopButton from './components/ScrollToTopButton';
 import ThemeModal from './components/ThemeModal';
 import { searchMulti, getTvDetails, getMovieDetails, getSeasonDetails, getImages } from './services/tmdb';
-import { getContinueWatchingList, saveToContinueWatching, removeFromContinueWatching, exportContinueWatchingList, importContinueWatchingList, resetSiteData, getPlayerTheme, setPlayerTheme } from './services/storage';
+import { getContinueWatchingList, saveToContinueWatching, removeFromContinueWatching, exportContinueWatchingList, importContinueWatchingList, resetSiteData, getPlayerTheme, setPlayerTheme as savePlayerTheme } from './services/storage';
 import type { SearchResult, WatchProgressItem, WatchProgress, TVSearchResult, Episode, MovieSearchResult, ColorInfo } from './types';
 import { FilmIcon, TvIcon, BookOpenIcon, CloseIcon } from './components/Icons';
 import { DEFAULT_THEME } from './constants';
@@ -316,6 +316,7 @@ const App: React.FC = () => {
     resetSiteData();
     refreshContinueWatchingList();
     setPlayerTheme(DEFAULT_THEME);
+    savePlayerTheme(DEFAULT_THEME);
     setIsResetModalOpen(false);
     setFeedback("Site has been reset.");
     // also clear search state
@@ -329,7 +330,7 @@ const App: React.FC = () => {
 
   const handleThemeChange = (theme: ColorInfo) => {
     setPlayerTheme(theme);
-    setPlayerTheme(theme);
+    savePlayerTheme(theme);
     setFeedback(`Player theme changed to ${theme.name}`);
   };
 
