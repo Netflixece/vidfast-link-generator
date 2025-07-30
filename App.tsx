@@ -9,6 +9,7 @@ import ConfirmationModal from './components/ConfirmationModal';
 import HowToUseGuide from './components/HowToUseGuide';
 import ProfileMenu from './components/ProfileMenu';
 import ResetConfirmationModal from './components/ResetConfirmationModal';
+import ScrollToTopButton from './components/ScrollToTopButton';
 import { searchMulti, getTvDetails, getMovieDetails, getSeasonDetails, getImages } from './services/tmdb';
 import { getContinueWatchingList, saveToContinueWatching, removeFromContinueWatching, exportContinueWatchingList, importContinueWatchingList, resetSiteData } from './services/storage';
 import type { SearchResult, WatchProgressItem, WatchProgress, TVSearchResult, Episode, MovieSearchResult } from './types';
@@ -28,6 +29,7 @@ const App: React.FC = () => {
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [isUpdatingFromLink, setIsUpdatingFromLink] = useState(false);
+  const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [confirmationState, setConfirmationState] = useState<{
     isOpen: boolean;
     itemToAdd: SearchResult | null;
@@ -45,6 +47,18 @@ const App: React.FC = () => {
 
   useEffect(() => {
     setContinueWatchingList(getContinueWatchingList());
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollToTop(true);
+      } else {
+        setShowScrollToTop(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
@@ -307,6 +321,10 @@ const App: React.FC = () => {
     setSearchBarKey(Date.now());
   };
 
+  const handleScrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const isItemSelectedAndSaved = selectedItem ? continueWatchingList.some(i => i.media.id === selectedItem.id && i.media.media_type === selectedItem.media_type) : false;
 
   return (
@@ -451,6 +469,8 @@ const App: React.FC = () => {
         onConfirm={handleConfirmReset}
         onCancel={() => setIsResetModalOpen(false)}
       />
+
+      {showScrollToTop && <ScrollToTopButton onClick={handleScrollToTop} />}
 
       {feedback && (
         <div 
