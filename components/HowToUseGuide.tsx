@@ -1,5 +1,6 @@
 
 
+
 import React from 'react';
 import { SearchIcon, FilmIcon, TvIcon, BookmarkIcon, ExternalLinkIcon, UploadIcon } from './Icons';
 
@@ -9,7 +10,7 @@ interface HowToUseGuideProps {
 
 const HowToUseGuide: React.FC<HowToUseGuideProps> = ({ onGoBack }) => {
     return (
-        <div className="max-w-4xl mx-auto bg-neutral-900/50 p-8 rounded-lg animate-fade-in-up">
+        <div className="max-w-4xl mx-auto bg-neutral-900/50 p-8 rounded-lg">
             <h2 className="text-4xl tracking-wider text-netflix-red mb-6 text-center">How It Works</h2>
             
             <section className="mb-8">
