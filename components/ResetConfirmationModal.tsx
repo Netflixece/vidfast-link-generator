@@ -11,9 +11,9 @@ const ResetConfirmationModal: React.FC<ResetConfirmationModalProps> = ({ isOpen,
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-[60]" onClick={onCancel} role="dialog" aria-modal="true" aria-labelledby="reset-modal-title">
+    <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-[60] animate-fade-in-fast" onClick={onCancel} role="dialog" aria-modal="true" aria-labelledby="reset-modal-title">
       <div 
-        className="bg-netflix-dark rounded-xl shadow-2xl w-full max-w-md text-white transform transition-all animate-fade-in-up"
+        className="bg-netflix-dark rounded-xl shadow-2xl w-full max-w-md text-white animate-zoom-in"
         onClick={e => e.stopPropagation()}
       >
         <div className="p-8 text-center">
