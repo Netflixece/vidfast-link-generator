@@ -361,7 +361,7 @@ const App: React.FC = () => {
                           )}
                           {results.length > 0 && (
                             <>
-                                <h2 className="text-3xl tracking-wider text-white mb-6">Results for "{submittedQuery}"</h2>
+                                <h2 className="text-2xl tracking-wider text-white mb-6">Results for "{submittedQuery}"</h2>
                                 <ResultsGrid results={results} onSelect={handleSelectFromSearch} />
                             </>
                           )}
