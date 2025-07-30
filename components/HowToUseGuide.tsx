@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { SearchIcon, FilmIcon, TvIcon, BookmarkIcon, ExternalLinkIcon, UploadIcon } from './Icons';
+import { SearchIcon, FilmIcon, TvIcon, BookmarkIcon, ExternalLinkIcon, UploadIcon, PaletteIcon } from './Icons';
 
 interface HowToUseGuideProps {
     onGoBack: () => void;
@@ -70,7 +70,7 @@ const HowToUseGuide: React.FC<HowToUseGuideProps> = ({ onGoBack }) => {
                 </div>
             </section>
 
-             <section className="mb-8">
+            <section className="mb-8">
                 <h3 className="text-2xl font-bold mb-3 flex items-center">
                     <UploadIcon className="w-6 h-6 mr-3 text-netflix-red"/>
                     4. Update from a Link
@@ -84,6 +84,16 @@ const HowToUseGuide: React.FC<HowToUseGuideProps> = ({ onGoBack }) => {
                        <li>If it's a new item, it will ask for confirmation to add it to your list.</li>
                    </ul>
                 </div>
+            </section>
+
+            <section className="mb-8">
+                <h3 className="text-2xl font-bold mb-3 flex items-center">
+                    <PaletteIcon className="w-6 h-6 mr-3 text-netflix-red"/>
+                    5. Customize Your Player Theme
+                </h3>
+                <p className="text-neutral-300 ml-9">
+                    Personalize your viewing experience by changing the theme color of the VidFast player. Access the theme selector via the profile menu in the top-right corner. You can choose from presets or search for any color you like.
+                </p>
             </section>
 
             <div className="text-center mt-10">
