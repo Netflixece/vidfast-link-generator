@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import SearchBar from './components/SearchBar';
 import ResultsGrid from './components/ResultsGrid';
@@ -285,16 +286,15 @@ const App: React.FC = () => {
   const isItemSelectedAndSaved = selectedItem ? continueWatchingList.some(i => i.media.id === selectedItem.id && i.media.media_type === selectedItem.media_type) : false;
 
   return (
-    <div className="min-h-screen bg-black text-white font-sans relative">
-      <div className="absolute top-4 right-4 md:top-6 md:right-8 z-20">
-        <ProfileMenu
-          onImport={handleImport}
-          onExport={handleExport}
-          onReset={handleReset}
-        />
-      </div>
-
-      <header className="py-8 px-4 text-center">
+    <div className="min-h-screen bg-black text-white font-sans">
+      <header className="py-8 px-4 text-center relative">
+        <div className="absolute top-10 right-6 md:right-10">
+            <ProfileMenu
+              onImport={handleImport}
+              onExport={handleExport}
+              onReset={handleReset}
+            />
+        </div>
         <h1
           className="text-6xl md:text-7xl font-heading tracking-wider text-netflix-red uppercase cursor-pointer hover:text-netflix-red-dark transition-colors duration-300"
           onClick={handleGoHome}
