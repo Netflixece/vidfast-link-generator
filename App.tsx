@@ -13,7 +13,7 @@ import ResetConfirmationModal from './components/ResetConfirmationModal';
 import { searchMulti, getTvDetails, getMovieDetails, getSeasonDetails, getImages } from './services/tmdb';
 import { getContinueWatchingList, saveToContinueWatching, removeFromContinueWatching, exportContinueWatchingList, importContinueWatchingList, resetSiteData } from './services/storage';
 import type { SearchResult, WatchProgressItem, WatchProgress, TVSearchResult, Episode, MovieSearchResult } from './types';
-import { FilmIcon, TvIcon } from './components/Icons';
+import { FilmIcon, TvIcon, BookOpenIcon } from './components/Icons';
 
 const App: React.FC = () => {
   const [view, setView] = useState<'home' | 'how-to-use'>('home');
@@ -324,9 +324,10 @@ const App: React.FC = () => {
         </p>
          <button
           onClick={() => setView('how-to-use')}
-          className="mt-4 text-netflix-red border border-netflix-red/50 rounded-full px-5 py-2 text-md transition-colors hover:bg-netflix-red/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-netflix-red"
+          className="mt-4 inline-flex items-center text-netflix-red border border-netflix-red/50 rounded-full px-5 py-2 text-md transition-colors hover:bg-netflix-red/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-netflix-red"
         >
-          How It Works
+          <BookOpenIcon className="w-5 h-5 mr-2" />
+          Guide to use this site
         </button>
       </header>
       
