@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useEffect, useMemo } from 'react';
 import type { SearchResult, TVDetails, WatchProgress, SeasonDetails } from '../types';
 import { getTvDetails, getSeasonDetails, getImages } from '../services/tmdb';
@@ -166,9 +167,9 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onSave, 
   const posterUrl = item.poster_path ? `${TMDB_IMAGE_BASE_URL}${item.poster_path}` : `https://picsum.photos/seed/${item.id}/500/750`;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50 transition-opacity" onClick={onClose}>
+    <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50 animate-fade-in-fast" onClick={onClose}>
       <div 
-        className={`bg-netflix-dark rounded-xl shadow-2xl w-full text-white transform transition-all animate-fade-in-up flex ${isMovie ? 'max-w-4xl flex-row' : 'max-w-6xl flex-col'}`} 
+        className={`bg-netflix-dark rounded-xl shadow-2xl w-full text-white animate-zoom-in flex ${isMovie ? 'max-w-4xl flex-row' : 'max-w-6xl flex-col'}`} 
         style={isMovie ? {} : {height: '95vh'}} 
         onClick={e => e.stopPropagation()}
       >
