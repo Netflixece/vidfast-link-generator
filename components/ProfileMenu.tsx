@@ -1,13 +1,15 @@
+
 import React, { useState, useRef, useEffect } from 'react';
-import { UserIcon, DownloadIcon, UploadIcon, TrashIcon } from './Icons';
+import { UserIcon, DownloadIcon, UploadIcon, TrashIcon, PaletteIcon } from './Icons';
 
 interface ProfileMenuProps {
     onImport: (file: File) => void;
     onExport: () => void;
     onReset: () => void;
+    onThemeSelect: () => void;
 }
 
-const ProfileMenu: React.FC<ProfileMenuProps> = ({ onImport, onExport, onReset }) => {
+const ProfileMenu: React.FC<ProfileMenuProps> = ({ onImport, onExport, onReset, onThemeSelect }) => {
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -44,6 +46,11 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ onImport, onExport, onReset }
         onExport();
         setIsOpen(false);
     };
+
+    const handleThemeSelectClick = () => {
+        onThemeSelect();
+        setIsOpen(false);
+    };
     
     const handleResetClick = () => {
         onReset();
@@ -69,6 +76,15 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ onImport, onExport, onReset }
                     aria-labelledby="user-menu-button"
                 >
                     <ul className="py-1">
+                        <li>
+                            <button onClick={handleThemeSelectClick} className="w-full text-left flex items-center px-4 py-2 text-sm text-neutral-200 hover:bg-neutral-700" role="menuitem">
+                                <PaletteIcon className="w-5 h-5 mr-3" />
+                                Player Theme
+                            </button>
+                        </li>
+                        <li>
+                            <div className="my-1 border-t border-neutral-700"></div>
+                        </li>
                         <li>
                             <button onClick={handleImportClick} className="w-full text-left flex items-center px-4 py-2 text-sm text-neutral-200 hover:bg-neutral-700" role="menuitem">
                                 <UploadIcon className="w-5 h-5 mr-3" />
