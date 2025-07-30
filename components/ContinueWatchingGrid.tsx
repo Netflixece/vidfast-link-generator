@@ -13,7 +13,7 @@ interface ContinueWatchingGridProps {
 const ContinueWatchingGrid: React.FC<ContinueWatchingGridProps> = ({ items, onSelect, onRemove }) => {
   return (
     <div>
-        <h2 className="text-3xl tracking-wider text-white mb-6">Continue Watching</h2>
+        <h2 className="text-2xl tracking-wider text-white mb-6">Continue Watching</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
           {items.map((item, index) => (
             <div
