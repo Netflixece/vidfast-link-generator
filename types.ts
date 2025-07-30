@@ -102,3 +102,8 @@ export interface ImagesResponse {
     logos: ImageInfo[];
     posters: ImageInfo[];
 }
+
+export interface ColorInfo {
+    name: string;
+    hex: string;
+}
