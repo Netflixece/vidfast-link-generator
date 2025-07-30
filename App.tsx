@@ -296,7 +296,7 @@ const App: React.FC = () => {
             />
         </div>
         <h1
-          className="text-6xl md:text-7xl font-bold tracking-wider text-netflix-red uppercase cursor-pointer hover:text-netflix-red-dark transition-colors duration-300"
+          className="text-6xl md:text-7xl font-bold text-netflix-red uppercase cursor-pointer hover:text-netflix-red-dark transition-colors duration-300"
           onClick={handleGoHome}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
