@@ -6,17 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <title>VidFast Link Generator</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
         theme: {
           extend: {
             fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              heading: ['Bebas Neue', 'cursive'],
+              sans: ['CustomFont', 'sans-serif'],
             },
             colors: {
               'netflix-red': '#E50914',
@@ -29,6 +25,31 @@
       }
     </script>
     <style>
+        @font-face {
+            font-family: 'CustomFont';
+            src: url('/assets/fonts/CustomFont-Light.otf') format('opentype');
+            font-weight: 300;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'CustomFont';
+            src: url('/assets/fonts/CustomFont-Regular.otf') format('opentype');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'CustomFont';
+            src: url('/assets/fonts/CustomFont-Medium.otf') format('opentype');
+            font-weight: 500;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'CustomFont';
+            src: url('/assets/fonts/CustomFont-Bold.otf') format('opentype');
+            font-weight: 700;
+            font-style: normal;
+        }
+
         /* Custom scrollbar for the new theme */
         ::-webkit-scrollbar {
             width: 8px;
@@ -43,6 +64,11 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #B20710; /* netflix-red-dark */
         }
+        
+        /* Ensure form elements inherit the font */
+        input, button, select, textarea {
+            font-family: inherit;
+        }
     </style>
   <script type="importmap">
 {
@@ -54,7 +80,7 @@
 }
 </script>
 </head>
-  <body class="bg-black">
+  <body class="bg-black font-sans">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
