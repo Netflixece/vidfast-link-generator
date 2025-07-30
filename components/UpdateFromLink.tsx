@@ -1,16 +1,28 @@
 
-
 import React, { useState } from 'react';
 import { SpinnerIcon } from './Icons';
 
 const UpdateFromLink: React.FC<{ onUpdate: (url: string) => void; isUpdating: boolean }> = ({ onUpdate, isUpdating }) => {
     const [url, setUrl] = useState('');
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (url.trim() && !isUpdating) {
-            onUpdate(url);
-            setUrl('');
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newUrl = e.target.value;
+        setUrl(newUrl);
+
+        const trimmedUrl = newUrl.trim();
+        if (!trimmedUrl || isUpdating) {
+            return;
+        }
+
+        // Regexes to match complete VidFast links.
+        // These cover all formats handled by `handleUpdateFromLink` in App.tsx.
+        const validTvRegex = /vidfast\.pro\/tv\/\d+\/\d+\/\d+/;
+        const movieRegex = /vidfast\.pro\/movie\/\d+/;
+        const baseTvRegex = /vidfast\.pro\/tv\/\d+\/?($|\?.*)/;
+
+        if (validTvRegex.test(trimmedUrl) || movieRegex.test(trimmedUrl) || baseTvRegex.test(trimmedUrl)) {
+            onUpdate(trimmedUrl);
+            setUrl(''); // Clear the input after initiating the update
         }
     };
 
@@ -22,25 +34,22 @@ const UpdateFromLink: React.FC<{ onUpdate: (url: string) => void; isUpdating: bo
             <p className="text-neutral-400 mb-4">
                 Paste a VidFast link for any movie or episode. We'll add it to your Continue Watching list or update your progress if it's already there.
             </p>
-            <form onSubmit={handleSubmit} className="relative">
+            <div className="relative">
                 <input
                     type="url"
                     value={url}
-                    onChange={(e) => setUrl(e.target.value)}
-                    placeholder="Paste VidFast link here..."
-                    className="w-full pl-5 pr-32 py-3 text-base bg-neutral-800 text-white border-2 border-neutral-700 rounded-full focus:outline-none focus:ring-2 focus:ring-netflix-red focus:border-netflix-red transition-colors"
+                    onChange={handleChange}
+                    placeholder="Paste VidFast link here"
+                    className="w-full pl-5 pr-12 py-3 text-base bg-neutral-800 text-white border-2 border-neutral-700 rounded-full focus:outline-none focus:ring-2 focus:ring-netflix-red focus:border-netflix-red transition-colors disabled:opacity-70"
+                    disabled={isUpdating}
+                    aria-label="Paste link to add or update"
                 />
-                <div className="absolute inset-y-0 right-0 flex items-center pr-2">
-                    <button
-                        type="submit"
-                        className="bg-netflix-red hover:bg-netflix-red-dark text-white font-bold py-2 px-5 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center w-24"
-                        disabled={!url.trim() || isUpdating}
-                        aria-label="Update progress from link"
-                    >
-                        {isUpdating ? <SpinnerIcon className="w-5 h-5" /> : 'Update'}
-                    </button>
-                </div>
-            </form>
+                {isUpdating && (
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                        <SpinnerIcon className="w-6 h-6 text-netflix-red" />
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
