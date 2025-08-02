@@ -10,6 +10,7 @@ import ProfileMenu from './components/ProfileMenu';
 import ResetConfirmationModal from './components/ResetConfirmationModal';
 import ScrollToTopButton from './components/ScrollToTopButton';
 import ThemeModal from './components/ThemeModal';
+import SkeletonGrid from './components/SkeletonGrid';
 import { searchMulti, getTvDetails, getMovieDetails, getSeasonDetails, getImages } from './services/tmdb';
 import { getContinueWatchingList, saveToContinueWatching, removeFromContinueWatching, exportContinueWatchingList, importContinueWatchingList, resetSiteData, getPlayerTheme, setPlayerTheme as savePlayerTheme } from './services/storage';
 import type { SearchResult, WatchProgressItem, WatchProgress, TVSearchResult, Episode, MovieSearchResult, ColorInfo } from './types';
@@ -409,6 +410,41 @@ const App: React.FC = () => {
 
   const isItemSelectedAndSaved = selectedItem ? continueWatchingList.some(i => i.media.id === selectedItem.id && i.media.media_type === selectedItem.media_type) : false;
 
+  const renderSearchResults = () => {
+    if (isLoading && results.length === 0) {
+      return (
+        <>
+          <h2 className="text-2xl tracking-wider text-neutral-400 mb-6">Searching for "{submittedQuery}"...</h2>
+          <SkeletonGrid />
+        </>
+      );
+    }
+
+    if (!isLoading && error) {
+      return <p className="text-center text-red-400 text-lg py-16" role="alert">{error}</p>;
+    }
+
+    if (results.length > 0) {
+      return (
+        <>
+          <h2 className="text-2xl tracking-wider text-white mb-6">Results for "{submittedQuery}"</h2>
+          <ResultsGrid results={results} onSelect={handleSelectFromSearch} />
+        </>
+      );
+    }
+
+    if (!isLoading && !error && hasSearched && results.length === 0) {
+      return (
+        <div className="text-center text-neutral-500 text-lg py-16">
+          <p>No results found for "{submittedQuery}".</p>
+          <p className="text-md text-neutral-600 mt-2">Try checking the spelling or searching for a different title.</p>
+        </div>
+      );
+    }
+    
+    return null;
+  };
+
   return (
     <div className="min-h-screen bg-black text-white">
       <header className="py-8 px-4 text-center relative">
@@ -476,54 +512,48 @@ const App: React.FC = () => {
               <>
                   {hasSearched ? (
                       <div className="mt-8">
-                          {isLoading && !results.length && (
-                          <div className="flex justify-center items-center py-16" aria-label="Loading content">
-                              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-netflix-red"></div>
-                          </div>
-                          )}
-                          {!isLoading && error && (
-                          <p className="text-center text-red-400 text-lg py-16" role="alert">{error}</p>
-                          )}
-                          {results.length > 0 && (
-                            <>
-                                <h2 className="text-2xl tracking-wider text-white mb-6">Results for "{submittedQuery}"</h2>
-                                <ResultsGrid results={results} onSelect={handleSelectFromSearch} />
-                            </>
-                          )}
-                          {!isLoading && !error && hasSearched && results.length === 0 && (
-                            <div className="text-center text-neutral-500 text-lg py-16">
-                                <p>No results found for "{submittedQuery}".</p>
-                                <p className="text-md text-neutral-600 mt-2">Try checking the spelling or searching for a different title.</p>
-                            </div>
-                          )}
+                        {renderSearchResults()}
                       </div>
                   ) : (
                       <div className="mt-4">
                           {continueWatchingList.length > 0 ? (
+                            <>
                               <ContinueWatchingGrid 
                                   items={continueWatchingList} 
                                   onSelect={handleSelectFromContinueWatching}
                                   onRemove={handleRemoveProgress}
                                   playerTheme={playerTheme.hex.replace('#', '')}
                               />
+                               <UpdateFromLink
+                                value={linkInputValue}
+                                onChange={handleLinkInputChange}
+                                status={linkUpdateStatus}
+                                isFadingOut={isLinkFadingOut}
+                              />
+                            </>
                           ) : (
                               !isLoading && !error && (
-                                <div className="text-center text-neutral-600 py-16 my-8">
-                                    <div className="flex justify-center items-center space-x-4 text-neutral-700">
-                                        <FilmIcon className="w-20 h-20 opacity-50 -rotate-12"/>
-                                        <TvIcon className="w-24 h-24 opacity-60 rotate-6"/>
+                                <div className="max-w-4xl mx-auto bg-neutral-900/40 border border-neutral-800 rounded-2xl p-8 md:p-12 my-8 text-center animate-fade-in">
+                                    <div className="flex justify-center items-center space-x-4 text-neutral-800 mb-8">
+                                        <FilmIcon className="w-16 h-16 opacity-80 -rotate-12"/>
+                                        <TvIcon className="w-20 h-20 opacity-90 rotate-6"/>
                                     </div>
-                                    <h2 className="text-3xl font-bold mt-8 mb-2 text-white">Your List is Empty</h2>
-                                    <p className="text-lg text-neutral-400">Search for a movie or show to get started.</p>
+                                    <h2 className="text-4xl font-bold mb-3 text-white">Welcome to VidFast</h2>
+                                    <div className="mb-8">
+                                      <p className="text-xl font-medium text-neutral-100">Your list is currently empty.</p>
+                                      <p className="text-lg text-neutral-400 mt-2">Get started by searching for content or pasting your VidFast link below to update your Continue Watching.</p>
+                                    </div>
+                                    <UpdateFromLink
+                                      value={linkInputValue}
+                                      onChange={handleLinkInputChange}
+                                      status={linkUpdateStatus}
+                                      isFadingOut={isLinkFadingOut}
+                                      variant="compact"
+                                    />
                                 </div>
                               )
                           )}
-                          <UpdateFromLink
-                            value={linkInputValue}
-                            onChange={handleLinkInputChange}
-                            status={linkUpdateStatus}
-                            isFadingOut={isLinkFadingOut}
-                          />
+                         
                       </div>
                   )}
               </>
