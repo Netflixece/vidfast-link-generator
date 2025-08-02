@@ -169,7 +169,18 @@ export const PaletteIcon = ({ className }: { className?: string }) => (
 );
 
 export const CheckIcon = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <polyline points="4 12 9 17 20 6"></polyline>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <circle
+      cx="12"
+      cy="12"
+      r="10"
+      strokeWidth="2"
+      className="animate-draw-circle"
+    />
+    <polyline
+      points="7 13 11 17 18 8"
+      strokeWidth="2.5"
+      className="animate-draw-check"
+    />
   </svg>
 );
