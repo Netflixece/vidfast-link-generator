@@ -33,6 +33,10 @@
                 '0%': { opacity: '0', transform: 'scale(0.97)' },
                 '100%': { opacity: '1', transform: 'scale(1)' },
               },
+              'fade-out-input': {
+                'from': { color: 'white' },
+                'to': { color: 'transparent' },
+              },
             },
             animation: {
               'fade-in': 'fade-in 0.5s ease-out forwards',
@@ -40,6 +44,7 @@
               'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
               'zoom-in': 'zoom-in 0.3s ease-out forwards',
               'zoom-in-fast': 'zoom-in 0.15s ease-out forwards',
+              'fade-out-input': 'fade-out-input 0.8s ease-in-out forwards',
             }
           }
         }
@@ -91,14 +96,29 @@
             font-family: inherit;
         }
         
-        /* Checkmark animation */
-        .animate-draw-check {
-            stroke-dasharray: 24;
-            stroke-dashoffset: 24;
-            animation: draw-check 0.4s ease-out forwards;
+        /* Apple Pay style checkmark animation */
+        @keyframes draw-circle {
+            to {
+                stroke-dashoffset: 0;
+            }
         }
+
         @keyframes draw-check {
-            to { stroke-dashoffset: 0; }
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        .animate-draw-circle {
+            stroke-dasharray: 63; /* 2 * PI * 10 */
+            stroke-dashoffset: 63;
+            animation: draw-circle 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+        .animate-draw-check {
+            stroke-dasharray: 18;
+            stroke-dashoffset: 18;
+            /* Start drawing after the circle is mostly complete */
+            animation: draw-check 0.6s cubic-bezier(0.25, 1, 0.5, 1) 0.5s forwards;
         }
     </style>
   <script type="importmap">
