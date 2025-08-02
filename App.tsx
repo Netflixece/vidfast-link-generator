@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import SearchBar from './components/SearchBar';
 import ResultsGrid from './components/ResultsGrid';
@@ -17,6 +16,8 @@ import type { SearchResult, WatchProgressItem, WatchProgress, TVSearchResult, Ep
 import { FilmIcon, TvIcon, BookOpenIcon, CloseIcon } from './components/Icons';
 import { DEFAULT_THEME } from './constants';
 
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 const App: React.FC = () => {
   const [view, setView] = useState<'home' | 'how-to-use'>('home');
   const [submittedQuery, setSubmittedQuery] = useState('');
@@ -33,6 +34,7 @@ const App: React.FC = () => {
   const [linkInputValue, setLinkInputValue] = useState('');
   const [linkUpdateStatus, setLinkUpdateStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const linkUpdateTimeoutRef = useRef<number | null>(null);
+  const [isLinkFadingOut, setIsLinkFadingOut] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
   const [playerTheme, setPlayerTheme] = useState<ColorInfo>(DEFAULT_THEME);
@@ -148,9 +150,46 @@ const App: React.FC = () => {
     removeFromContinueWatching(id, media_type);
     refreshContinueWatchingList();
   };
+
+  const fadeAndClearInput = async () => {
+    const FADE_DURATION = 800; // Match the CSS animation duration
+    setIsLinkFadingOut(true);
+    await sleep(FADE_DURATION);
+    setLinkInputValue('');
+    setLinkUpdateStatus('idle');
+    setIsLinkFadingOut(false);
+  };
+  
+  const showSuccessAndClear = async (feedbackMessage: string) => {
+    // 1. Show the success checkmark animation
+    setLinkUpdateStatus('success');
+  
+    const CHECKMARK_ANIMATION_DURATION = 1100; // Corresponds to the CSS animation duration
+    const FEEDBACK_DURATION = 5000; // Duration the feedback toast is visible
+    const POST_ANIMATION_PAUSE = 200; // Small pause for visual separation
+  
+    // 2. Wait for the checkmark animation to complete
+    await sleep(CHECKMARK_ANIMATION_DURATION);
+  
+    // 3. Hide the checkmark. The input remains populated.
+    setLinkUpdateStatus('idle');
+  
+    // 4. Brief pause for visual separation before showing the feedback toast
+    await sleep(POST_ANIMATION_PAUSE);
+  
+    // 5. Show the feedback message (toast). The `useEffect` for feedback will make it disappear after `FEEDBACK_DURATION`.
+    setFeedback(feedbackMessage);
+  
+    // 6. Wait for the feedback message to have been visible and then disappear.
+    await sleep(FEEDBACK_DURATION);
+  
+    // 7. After the feedback has disappeared, start the fade-out of the input link and clear it.
+    await fadeAndClearInput();
+  };
   
   const handleLinkInputChange = (url: string) => {
     setLinkInputValue(url);
+    if(isLinkFadingOut) setIsLinkFadingOut(false);
     setLinkUpdateStatus('idle');
 
     if (linkUpdateTimeoutRef.current) clearTimeout(linkUpdateTimeoutRef.current);
@@ -183,18 +222,11 @@ const App: React.FC = () => {
         const mediaId = Number(id);
         const itemToUpdate = continueWatchingList.find(i => i.media.id === mediaId && i.media.media_type === 'tv');
         
-        if (itemToUpdate) {
+        if (itemToUpdate && itemToUpdate.media.media_type === 'tv') {
             const newProgress = { season: Number(season), episode: Number(episode) };
             saveToContinueWatching(itemToUpdate.media, newProgress, itemToUpdate.cleanPosterPath || itemToUpdate.media.poster_path);
             refreshContinueWatchingList();
-            setLinkUpdateStatus('success');
-            if (itemToUpdate.media.media_type === 'tv') {
-                setFeedback(`'${itemToUpdate.media.name}' progress updated to S${newProgress.season} E${newProgress.episode}.`);
-            }
-            setTimeout(() => {
-                setLinkInputValue('');
-                setLinkUpdateStatus('idle');
-            }, 2000);
+            showSuccessAndClear(`'${itemToUpdate.media.name}' progress updated to S${newProgress.season} E${newProgress.episode}.`);
         } else {
             try {
               const tvDetails = await getTvDetails(mediaId);
@@ -228,19 +260,12 @@ const App: React.FC = () => {
                   onConfirm: () => {
                       saveToContinueWatching(newItem, newProgress, posterToSave);
                       refreshContinueWatchingList();
-                      setFeedback(`Added '${tvDetails.name}' to Continue Watching.`);
                       handleCloseConfirmation();
-                      // Now show success animation, then clear
-                      setLinkUpdateStatus('success');
-                      setTimeout(() => {
-                          setLinkInputValue('');
-                          setLinkUpdateStatus('idle');
-                      }, 2000);
+                      showSuccessAndClear(`Added '${tvDetails.name}' to Continue Watching.`);
                   },
                   onCancel: () => {
                       handleCloseConfirmation();
-                      setLinkInputValue('');
-                      setLinkUpdateStatus('idle');
+                      fadeAndClearInput();
                   }
               });
             } catch (err) {
@@ -258,17 +283,10 @@ const App: React.FC = () => {
         const mediaId = Number(id);
         const itemToUpdate = continueWatchingList.find(i => i.media.id === mediaId && i.media.media_type === 'movie');
 
-        if (itemToUpdate) {
+        if (itemToUpdate && itemToUpdate.media.media_type === 'movie') {
             saveToContinueWatching(itemToUpdate.media, {}, itemToUpdate.cleanPosterPath || itemToUpdate.media.poster_path); // Resaves to update timestamp
             refreshContinueWatchingList();
-            setLinkUpdateStatus('success');
-            if (itemToUpdate.media.media_type === 'movie') {
-                setFeedback(`'${itemToUpdate.media.title}' has been moved to the front of your list.`);
-            }
-            setTimeout(() => {
-                setLinkInputValue('');
-                setLinkUpdateStatus('idle');
-            }, 2000);
+            showSuccessAndClear(`'${itemToUpdate.media.title}' has been moved to the front of your list.`);
         } else {
             try {
               const movieDetails = await getMovieDetails(mediaId);
@@ -285,19 +303,12 @@ const App: React.FC = () => {
                   onConfirm: () => {
                       saveToContinueWatching(movieDetails, {}, posterToSave);
                       refreshContinueWatchingList();
-                      setFeedback(`Added '${movieDetails.title}' to Continue Watching.`);
                       handleCloseConfirmation();
-                      // Now show success animation, then clear
-                      setLinkUpdateStatus('success');
-                      setTimeout(() => {
-                          setLinkInputValue('');
-                          setLinkUpdateStatus('idle');
-                      }, 2000);
+                      showSuccessAndClear(`Added '${movieDetails.title}' to Continue Watching.`);
                   },
                   onCancel: () => {
                       handleCloseConfirmation();
-                      setLinkInputValue('');
-                      setLinkUpdateStatus('idle');
+                      fadeAndClearInput();
                   }
               });
             } catch (err) {
@@ -511,6 +522,7 @@ const App: React.FC = () => {
                             value={linkInputValue}
                             onChange={handleLinkInputChange}
                             status={linkUpdateStatus}
+                            isFadingOut={isLinkFadingOut}
                           />
                       </div>
                   )}
