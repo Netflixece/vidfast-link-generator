@@ -167,3 +167,9 @@ export const PaletteIcon = ({ className }: { className?: string }) => (
         <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.667 0-.422-.02-.833-.052-1.222"></path>
     </svg>
 );
+
+export const CheckIcon = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <polyline points="4 12 9 17 20 6"></polyline>
+  </svg>
+);
