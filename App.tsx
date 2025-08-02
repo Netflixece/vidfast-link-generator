@@ -30,7 +30,9 @@ const App: React.FC = () => {
   const [continueWatchingList, setContinueWatchingList] = useState<WatchProgressItem[]>([]);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
-  const [isUpdatingFromLink, setIsUpdatingFromLink] = useState(false);
+  const [linkInputValue, setLinkInputValue] = useState('');
+  const [linkUpdateStatus, setLinkUpdateStatus] = useState<'idle' | 'loading' | 'success'>('idle');
+  const linkUpdateTimeoutRef = useRef<number | null>(null);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
   const [playerTheme, setPlayerTheme] = useState<ColorInfo>(DEFAULT_THEME);
@@ -40,12 +42,14 @@ const App: React.FC = () => {
     progressToAdd: WatchProgress | null;
     episodeDetails: Episode | null;
     onConfirm: () => void;
+    onCancel: () => void;
   }>({
     isOpen: false,
     itemToAdd: null,
     progressToAdd: null,
     episodeDetails: null,
     onConfirm: () => {},
+    onCancel: () => {},
   });
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -132,7 +136,7 @@ const App: React.FC = () => {
   };
 
   const handleCloseConfirmation = () => {
-    setConfirmationState({ isOpen: false, itemToAdd: null, progressToAdd: null, episodeDetails: null, onConfirm: () => {} });
+    setConfirmationState({ isOpen: false, itemToAdd: null, progressToAdd: null, episodeDetails: null, onConfirm: () => {}, onCancel: () => {} });
   };
 
   const handleSaveProgress = (item: SearchResult, progress: WatchProgress, cleanPosterPath: string | null) => {
@@ -144,14 +148,34 @@ const App: React.FC = () => {
     removeFromContinueWatching(id, media_type);
     refreshContinueWatchingList();
   };
+  
+  const handleLinkInputChange = (url: string) => {
+    setLinkInputValue(url);
+    setLinkUpdateStatus('idle');
 
-  const handleUpdateFromLink = async (url: string) => {
-    if (isUpdatingFromLink) return;
-    setIsUpdatingFromLink(true);
+    if (linkUpdateTimeoutRef.current) clearTimeout(linkUpdateTimeoutRef.current);
+
+    const trimmedUrl = url.trim();
+    if (!trimmedUrl) return;
+
+    const validTvRegex = /vidfast\.pro\/tv\/\d+\/\d+\/\d+/;
+    const movieRegex = /vidfast\.pro\/movie\/\d+/;
+    const baseTvRegex = /vidfast\.pro\/tv\/\d+\/?($|\?.*)/;
+
+    if (validTvRegex.test(trimmedUrl) || movieRegex.test(trimmedUrl) || baseTvRegex.test(trimmedUrl)) {
+        linkUpdateTimeoutRef.current = window.setTimeout(() => {
+            actuallyUpdateFromLink(trimmedUrl);
+        }, 300);
+    }
+  };
+
+  const actuallyUpdateFromLink = async (url: string) => {
+    if (linkUpdateStatus === 'loading') return;
+    setLinkUpdateStatus('loading');
 
     const tvRegex = /vidfast\.pro\/tv\/(\d+)\/(\d+)\/(\d+)/;
     const movieRegex = /vidfast\.pro\/movie\/(\d+)/;
-    const baseTvRegex = /vidfast\.pro\/tv\/(\d+)\/?($|\?.*)/; // Matches TV links without S/E
+    const baseTvRegex = /vidfast\.pro\/tv\/(\d+)\/?($|\?.*)/;
 
     const tvMatch = url.match(tvRegex);
     if (tvMatch) {
@@ -163,9 +187,14 @@ const App: React.FC = () => {
             const newProgress = { season: Number(season), episode: Number(episode) };
             saveToContinueWatching(itemToUpdate.media, newProgress, itemToUpdate.cleanPosterPath || itemToUpdate.media.poster_path);
             refreshContinueWatchingList();
+            setLinkUpdateStatus('success');
             if (itemToUpdate.media.media_type === 'tv') {
                 setFeedback(`'${itemToUpdate.media.name}' progress updated to S${newProgress.season} E${newProgress.episode}.`);
             }
+            setTimeout(() => {
+                setLinkInputValue('');
+                setLinkUpdateStatus('idle');
+            }, 2000);
         } else {
             try {
               const tvDetails = await getTvDetails(mediaId);
@@ -190,6 +219,7 @@ const App: React.FC = () => {
                   first_air_date: tvDetails.first_air_date,
               };
 
+              setLinkUpdateStatus('idle'); // Stop loading, keep text in box for confirmation
               setConfirmationState({
                   isOpen: true,
                   itemToAdd: newItem,
@@ -200,14 +230,25 @@ const App: React.FC = () => {
                       refreshContinueWatchingList();
                       setFeedback(`Added '${tvDetails.name}' to Continue Watching.`);
                       handleCloseConfirmation();
+                      // Now show success animation, then clear
+                      setLinkUpdateStatus('success');
+                      setTimeout(() => {
+                          setLinkInputValue('');
+                          setLinkUpdateStatus('idle');
+                      }, 2000);
+                  },
+                  onCancel: () => {
+                      handleCloseConfirmation();
+                      setLinkInputValue('');
+                      setLinkUpdateStatus('idle');
                   }
               });
             } catch (err) {
                 console.error(err);
                 setFeedback("Could not find details for the TV show in the link.");
+                setLinkUpdateStatus('idle');
             }
         }
-        setIsUpdatingFromLink(false);
         return;
     }
 
@@ -220,9 +261,14 @@ const App: React.FC = () => {
         if (itemToUpdate) {
             saveToContinueWatching(itemToUpdate.media, {}, itemToUpdate.cleanPosterPath || itemToUpdate.media.poster_path); // Resaves to update timestamp
             refreshContinueWatchingList();
+            setLinkUpdateStatus('success');
             if (itemToUpdate.media.media_type === 'movie') {
                 setFeedback(`'${itemToUpdate.media.title}' has been moved to the front of your list.`);
             }
+            setTimeout(() => {
+                setLinkInputValue('');
+                setLinkUpdateStatus('idle');
+            }, 2000);
         } else {
             try {
               const movieDetails = await getMovieDetails(mediaId);
@@ -230,6 +276,7 @@ const App: React.FC = () => {
               const textlessPoster = images.posters.find(p => p.iso_639_1 === null);
               const posterToSave = textlessPoster?.file_path || images.posters[0]?.file_path || movieDetails.poster_path;
 
+              setLinkUpdateStatus('idle'); // Stop loading, keep text in box for confirmation
               setConfirmationState({
                   isOpen: true,
                   itemToAdd: movieDetails,
@@ -240,14 +287,25 @@ const App: React.FC = () => {
                       refreshContinueWatchingList();
                       setFeedback(`Added '${movieDetails.title}' to Continue Watching.`);
                       handleCloseConfirmation();
+                      // Now show success animation, then clear
+                      setLinkUpdateStatus('success');
+                      setTimeout(() => {
+                          setLinkInputValue('');
+                          setLinkUpdateStatus('idle');
+                      }, 2000);
+                  },
+                  onCancel: () => {
+                      handleCloseConfirmation();
+                      setLinkInputValue('');
+                      setLinkUpdateStatus('idle');
                   }
               });
             } catch (err) {
               console.error(err);
               setFeedback("Could not find details for the movie in the link.");
+              setLinkUpdateStatus('idle');
             }
         }
-        setIsUpdatingFromLink(false);
         return;
     }
     
@@ -262,12 +320,12 @@ const App: React.FC = () => {
             console.error("Failed to fetch TV details for base link", err);
             setFeedback("The pasted TV show link is invalid or the show could not be found.");
         }
-        setIsUpdatingFromLink(false);
+        setLinkUpdateStatus('idle');
         return;
     }
     
     setFeedback('Invalid or unrecognized VidFast link format.');
-    setIsUpdatingFromLink(false);
+    setLinkUpdateStatus('idle');
   };
 
 
@@ -449,7 +507,11 @@ const App: React.FC = () => {
                                 </div>
                               )
                           )}
-                          <UpdateFromLink onUpdate={handleUpdateFromLink} isUpdating={isUpdatingFromLink} />
+                          <UpdateFromLink
+                            value={linkInputValue}
+                            onChange={handleLinkInputChange}
+                            status={linkUpdateStatus}
+                          />
                       </div>
                   )}
               </>
@@ -463,7 +525,7 @@ const App: React.FC = () => {
           onClose={handleCloseModal}
           onSave={handleSaveProgress}
           onRemove={handleRemoveProgress}
-          onUpdateFromLink={handleUpdateFromLink}
+          onUpdateFromLink={actuallyUpdateFromLink}
           setFeedback={setFeedback}
           isSaved={isItemSelectedAndSaved}
           initialProgress={selectedProgress}
@@ -477,7 +539,7 @@ const App: React.FC = () => {
         progress={confirmationState.progressToAdd}
         episodeDetails={confirmationState.episodeDetails}
         onConfirm={confirmationState.onConfirm}
-        onCancel={handleCloseConfirmation}
+        onCancel={confirmationState.onCancel}
       />
 
       <ResetConfirmationModal
