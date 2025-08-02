@@ -1,5 +1,6 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import type { SearchResult, TVDetails, WatchProgress, SeasonDetails } from '../types';
 import { getTvDetails, getSeasonDetails, getImages } from '../services/tmdb';
 import { VIDFAST_MOVIE_URL, VIDFAST_TV_URL, TMDB_IMAGE_BASE_URL } from '../constants';
@@ -30,9 +31,18 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onSave, 
   const [selectedEpisode, setSelectedEpisode] = useState<number>(initialProgress?.episode || 1);
   const [isCopied, setIsCopied] = useState(false);
   
+  const episodeListRef = useRef<HTMLDivElement>(null);
+  const episodeRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+
   const isMovie = item.media_type === 'movie';
   const title = isMovie ? item.title : item.name;
   const posterUrl = item.poster_path ? `${TMDB_IMAGE_BASE_URL}${item.poster_path}` : `https://picsum.photos/seed/${item.id}/500/750`;
+
+  const availableSeasons = useMemo(() => {
+    if (!tvDetails) return [];
+    return tvDetails.seasons.filter(s => s.season_number > 0 && s.episode_count > 0);
+  }, [tvDetails]);
 
   // Fetch clean poster
   useEffect(() => {
@@ -83,7 +93,7 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onSave, 
 
   // Fetch details of selected season (for episode list)
   useEffect(() => {
-      if (item.media_type === 'tv' && tvDetails) {
+      if (item.media_type === 'tv' && tvDetails && selectedSeason > 0) {
         setIsLoadingSeason(true);
         setSeasonError(null);
         setSeasonDetails(null);
@@ -99,6 +109,16 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onSave, 
         return () => controller.abort();
       }
   }, [item.id, selectedSeason, tvDetails, item.media_type]);
+
+  // Scroll to selected episode
+  useEffect(() => {
+    if (seasonDetails && episodeRefs.current[selectedEpisode - 1]) {
+        episodeRefs.current[selectedEpisode - 1]?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest',
+        });
+    }
+  }, [selectedEpisode, seasonDetails]);
 
 
   const embedLink = useMemo(() => {
@@ -131,6 +151,19 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onSave, 
     onRemove(item.id, item.media_type);
     onClose();
   };
+  
+  const handleSeasonChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedSeason(Number(e.target.value));
+    setSelectedEpisode(1);
+    if(episodeListRef.current) {
+        episodeListRef.current.scrollTop = 0;
+    }
+  };
+
+  const handleEpisodeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedEpisode(Number(e.target.value));
+  };
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50 animate-fade-in-fast" onClick={onClose}>
@@ -224,45 +257,69 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onSave, 
 
             {/* Right Pane: Episodes & Actions */}
             <div className="w-2/3 flex flex-col bg-neutral-900/50">
-              {/* Top: Season Selector */}
+               {/* Top: Season & Episode Selectors */}
               <div className="p-4 flex-shrink-0 border-b border-neutral-800/70">
-                {isLoadingDetails && <div className="text-center p-2">Loading seasons...</div>}
+                {isLoadingDetails && <div className="text-center p-2">Loading...</div>}
                 {error && <div className="text-center p-2 text-red-400">{error}</div>}
                 {tvDetails && (
-                  <div className="flex items-center space-x-4">
-                    <label htmlFor="season" className="text-lg font-bold text-neutral-300">Season</label>
-                    <select
-                      id="season"
-                      value={selectedSeason}
-                      onChange={e => {
-                          setSelectedSeason(Number(e.target.value));
-                          setSelectedEpisode(1); // Reset to first episode on season change
-                      }}
-                      className="w-full max-w-xs bg-neutral-800 border border-neutral-700 rounded-md py-2 px-3 focus:ring-netflix-red focus:border-netflix-red"
-                    >
-                      {tvDetails.seasons.filter(s => s.season_number > 0 && s.episode_count > 0).map(season => (
-                        <option key={season.id} value={season.season_number}>
-                          {season.name}
-                        </option>
-                      ))}
-                    </select>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pr-10">
+                    {availableSeasons.length > 0 ? (
+                      <>
+                        <div className="flex items-center space-x-2 w-full sm:w-auto flex-1 min-w-0">
+                          <label htmlFor="season" className="text-lg font-bold text-neutral-300 flex-shrink-0">Season</label>
+                          <select
+                            id="season"
+                            value={selectedSeason}
+                            onChange={handleSeasonChange}
+                            className="bg-neutral-800 border border-neutral-700 rounded-md py-2 px-3 focus:ring-netflix-red focus:border-netflix-red w-full"
+                          >
+                            {availableSeasons.map(season => (
+                              <option key={season.id} value={season.season_number}>
+                                {season.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                         <div className="flex items-center space-x-2 w-full sm:w-auto flex-1 min-w-0">
+                          <label htmlFor="episode" className="text-lg font-bold text-neutral-300 flex-shrink-0">Episode</label>
+                          <select
+                            id="episode"
+                            value={selectedEpisode}
+                            onChange={handleEpisodeChange}
+                            className="bg-neutral-800 border border-neutral-700 rounded-md py-2 px-3 focus:ring-netflix-red focus:border-netflix-red w-full truncate"
+                            disabled={isLoadingSeason || !seasonDetails?.episodes.length}
+                          >
+                            {!isLoadingSeason && seasonDetails?.episodes.map(episode => (
+                                <option key={episode.id} value={episode.episode_number} title={episode.name}>
+                                    {episode.episode_number}. {episode.name}
+                                </option>
+                            ))}
+                          </select>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-neutral-400 w-full">No seasons available for this show.</p>
+                    )}
                   </div>
                 )}
               </div>
               
               {/* Middle: Episode List (scrollable) */}
-              <div className="flex-grow overflow-y-auto p-4 space-y-3">
+              <div ref={episodeListRef} className="flex-grow overflow-y-auto p-4 space-y-3">
                 {isLoadingSeason && <div className="flex items-center justify-center h-full"><SpinnerIcon className="w-8 h-8 text-netflix-red" /></div>}
                 {seasonError && <div className="text-center p-4 text-red-400">{seasonError}</div>}
-                {seasonDetails && !seasonDetails.episodes.length && (
-                    <div className="text-center text-neutral-500 py-10">No episodes found for this season.</div>
+                {seasonDetails && !isLoadingSeason && !seasonDetails.episodes.length && (
+                    <div className="text-center text-neutral-500 py-10">
+                      No episodes listed for this season.
+                    </div>
                 )}
-                {seasonDetails && seasonDetails.episodes.map(episode => {
+                {seasonDetails?.episodes.map(episode => {
                     const stillUrl = episode.still_path ? `${TMDB_IMAGE_BASE_URL.replace('w500', 'w300')}${episode.still_path}` : `https://picsum.photos/seed/${episode.id}/300/169`;
                     const isSelected = selectedEpisode === episode.episode_number;
                     return (
                         <div 
                             key={episode.id}
+                            ref={el => { episodeRefs.current[episode.episode_number - 1] = el; }}
                             onClick={() => setSelectedEpisode(episode.episode_number)}
                             className={`flex items-start p-2 rounded-lg cursor-pointer transition-all duration-200 border-2 ${isSelected ? 'bg-netflix-red/20 border-netflix-red' : 'bg-neutral-800/80 border-transparent hover:bg-neutral-700/80'}`}
                         >
