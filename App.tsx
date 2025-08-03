@@ -565,7 +565,7 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-black text-white">
       <header className="py-8 text-center">
         <div className="container mx-auto pl-6 pr-2 sm:pl-8 sm:pr-3 lg:pl-12 lg:pr-4 relative">
-            <div className="absolute top-4 right-2 sm:right-3 lg:right-4">
+            <div className="absolute top-4 right-2 sm:right-3 lg:right-12">
                 <ProfileMenu
                   onImport={handleImport}
                   onExport={handleExport}
