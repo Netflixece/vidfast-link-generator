@@ -1,5 +1,4 @@
 
-
 import React from 'react';
 import { TMDB_IMAGE_BASE_URL, VIDFAST_MOVIE_URL, VIDFAST_TV_URL } from '../constants';
 import type { WatchProgressItem } from '../types';
@@ -9,9 +8,10 @@ interface ContinueWatchingCardProps {
   item: WatchProgressItem;
   onSelect: (item: WatchProgressItem) => void;
   onRemove: (id: number, media_type: 'movie' | 'tv') => void;
+  playerTheme: string;
 }
 
-const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({ item, onSelect, onRemove }) => {
+const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({ item, onSelect, onRemove, playerTheme }) => {
   const { media, progress, cleanPosterPath } = item;
   const title = media.media_type === 'movie' ? media.title : media.name;
   
@@ -27,7 +27,7 @@ const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({ item, onSel
 
   const handlePlayClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const themeParam = '&theme=E50914';
+    const themeParam = `&theme=${playerTheme}`;
     let link = null;
 
     if (media.media_type === 'movie') {
@@ -55,7 +55,7 @@ const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({ item, onSel
       <img
         src={posterUrl}
         alt={`Poster for ${title}`}
-        className="w-full h-auto object-cover aspect-[2/3] group-hover:scale-105 transition-transform duration-300"
+        className="w-full h-auto object-cover aspect-[2/3] group-hover:scale-105 group-hover:brightness-[.6] transition-all duration-300"
         loading="lazy"
       />
       {/* Permanent gradient for text readability */}
@@ -67,7 +67,7 @@ const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({ item, onSel
       </div>
       
       {/* Hover elements */}
-      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-3">
+      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <button onClick={handlePlayClick} className="bg-white/20 backdrop-blur-sm border-2 border-white/50 text-white rounded-full p-3 hover:bg-white/30 transform hover:scale-110 transition-all" aria-label={`Resume ${title}`}>
             <PlayIcon className="w-8 h-8" />
         </button>
