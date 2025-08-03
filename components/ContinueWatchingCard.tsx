@@ -2,7 +2,7 @@
 import React from 'react';
 import { TMDB_IMAGE_BASE_URL, VIDFAST_MOVIE_URL, VIDFAST_TV_URL } from '../constants';
 import type { WatchProgressItem } from '../types';
-import { TrashIcon, PlayIcon } from './Icons';
+import { TrashIcon, PlayIcon, FilmIcon, TvIcon } from './Icons';
 import { useAppContext } from '../contexts/AppContext';
 
 interface ContinueWatchingCardProps {
@@ -60,6 +60,12 @@ const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({ item, onSel
       />
       {/* Permanent gradient for text readability */}
       <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black via-black/70 to-transparent pointer-events-none"></div>
+      
+      {/* Media Type Icon */}
+      <div className="absolute top-2 left-2 p-1.5 bg-black/60 rounded-full text-white z-10">
+          {media.media_type === 'movie' ? <FilmIcon className="w-5 h-5" /> : <TvIcon className="w-5 h-5" />}
+      </div>
+
       {/* Permanent text */}
       <div className="absolute inset-x-0 bottom-0 p-3 text-white" style={{textShadow: '0 2px 4px rgba(0,0,0,0.8)'}}>
           <h3 className="font-bold truncate">{title}</h3>
@@ -73,7 +79,7 @@ const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({ item, onSel
         </button>
       </div>
 
-      <button onClick={handleRemove} className="absolute top-2 right-2 bg-black/50 backdrop-blur-md text-white rounded-full p-2 hover:bg-netflix-red transition-colors opacity-0 group-hover:opacity-100 duration-300" aria-label={`Remove ${title} from list`}>
+      <button onClick={handleRemove} className="absolute top-2 right-2 bg-black/50 backdrop-blur-md text-white rounded-full p-2 hover:bg-netflix-red transition-colors opacity-0 group-hover:opacity-100 duration-300 z-10" aria-label={`Remove ${title} from list`}>
         <TrashIcon className="w-5 h-5" />
       </button>
     </div>
