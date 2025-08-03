@@ -29,6 +29,7 @@ const App: React.FC = () => {
     feedbackMessage,
     saveItem,
     removeItem,
+    toggleMyListItem,
     setFeedback,
     exportList,
     importList,
@@ -452,18 +453,18 @@ const App: React.FC = () => {
         return (
             <div className="mt-4">
                 <ContinueWatchingGrid onSelect={handleSelectFromContinueWatching} />
-                <div className="space-y-4">
-                    {myList.length > 0 && <ContentCarousel title="My List" items={myList.map(i => i.media)} onSelect={handleSelectFromSearch} />}
-                    {trending.length > 0 && <ContentCarousel title="Trending This Week" items={trending} onSelect={handleSelectFromSearch} />}
-                    {popularMovies.length > 0 && <ContentCarousel title="Popular Movies" items={popularMovies} onSelect={handleSelectFromSearch} />}
-                    {topRatedTv.length > 0 && <ContentCarousel title="Top Rated TV Shows" items={topRatedTv} onSelect={handleSelectFromSearch} />}
-                </div>
                 <UpdateFromLink
                     value={linkInputValue}
                     onChange={handleLinkInputChange}
                     status={linkUpdateStatus}
                     isFadingOut={isLinkFadingOut}
                 />
+                <div className="space-y-4">
+                    {myList.length > 0 && <ContentCarousel title="My List" items={myList.map(i => i.media)} onSelect={handleSelectFromSearch} onRemoveItem={toggleMyListItem} />}
+                    {trending.length > 0 && <ContentCarousel title="Trending This Week" items={trending} onSelect={handleSelectFromSearch} />}
+                    {popularMovies.length > 0 && <ContentCarousel title="Popular Movies" items={popularMovies} onSelect={handleSelectFromSearch} />}
+                    {topRatedTv.length > 0 && <ContentCarousel title="Top Rated TV Shows" items={topRatedTv} onSelect={handleSelectFromSearch} />}
+                </div>
             </div>
         );
     } else {
@@ -489,7 +490,7 @@ const App: React.FC = () => {
                     />
                 </div>
                 <div className="space-y-4">
-                    {myList.length > 0 && <ContentCarousel title="My List" items={myList.map(i => i.media)} onSelect={handleSelectFromSearch} />}
+                    {myList.length > 0 && <ContentCarousel title="My List" items={myList.map(i => i.media)} onSelect={handleSelectFromSearch} onRemoveItem={toggleMyListItem} />}
                     {trending.length > 0 && <ContentCarousel title="Trending This Week" items={trending} onSelect={handleSelectFromSearch} />}
                     {popularMovies.length > 0 && <ContentCarousel title="Popular Movies" items={popularMovies} onSelect={handleSelectFromSearch} />}
                     {topRatedTv.length > 0 && <ContentCarousel title="Top Rated TV Shows" items={topRatedTv} onSelect={handleSelectFromSearch} />}
