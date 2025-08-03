@@ -1,6 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { UserIcon, DownloadIcon, UploadIcon, TrashIcon, PaletteIcon } from './Icons';
+import { useAppContext } from '../contexts/AppContext';
 
 interface ProfileMenuProps {
     onImport: (file: File) => void;
@@ -10,6 +11,7 @@ interface ProfileMenuProps {
 }
 
 const ProfileMenu: React.FC<ProfileMenuProps> = ({ onImport, onExport, onReset, onThemeSelect }) => {
+    const { continueWatchingList, myList } = useAppContext();
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -76,6 +78,18 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ onImport, onExport, onReset, 
                     aria-labelledby="user-menu-button"
                 >
                     <ul className="py-1">
+                        <li className="px-4 pt-2 pb-1">
+                            <span className="text-xs font-bold text-neutral-500 uppercase">Stats</span>
+                        </li>
+                        <li className="px-4 py-1 text-sm text-neutral-300">
+                            Continue Watching: <span className="font-bold text-white">{continueWatchingList.length}</span>
+                        </li>
+                        <li className="px-4 pb-2 text-sm text-neutral-300">
+                            My List: <span className="font-bold text-white">{myList.length}</span>
+                        </li>
+                        <li>
+                            <div className="my-1 border-t border-neutral-700"></div>
+                        </li>
                         <li>
                             <button onClick={handleThemeSelectClick} className="w-full text-left flex items-center px-4 py-2 text-sm text-neutral-200 hover:bg-neutral-700" role="menuitem">
                                 <PaletteIcon className="w-5 h-5 mr-3" />
