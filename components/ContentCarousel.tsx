@@ -8,9 +8,10 @@ interface ContentCarouselProps {
   title: string;
   items: SearchResult[];
   onSelect: (item: SearchResult) => void;
+  onRemoveItem?: (item: SearchResult) => void;
 }
 
-const ContentCarousel: React.FC<ContentCarouselProps> = ({ title, items, onSelect }) => {
+const ContentCarousel: React.FC<ContentCarouselProps> = ({ title, items, onSelect, onRemoveItem }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showArrows, setShowArrows] = useState(false);
 
@@ -72,7 +73,7 @@ const ContentCarousel: React.FC<ContentCarouselProps> = ({ title, items, onSelec
               className="w-40 sm:w-48 md:w-52 flex-shrink-0 animate-fade-in"
               style={{ animationDelay: `${index * 50}ms` }}
             >
-              <ResultCard item={item} onSelect={onSelect} />
+              <ResultCard item={item} onSelect={onSelect} onRemove={onRemoveItem} />
             </div>
           ))}
         </div>
