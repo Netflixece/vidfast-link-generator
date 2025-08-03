@@ -52,6 +52,7 @@ const App: React.FC = () => {
   const [isLinkFadingOut, setIsLinkFadingOut] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
+  const [isGuideClosing, setIsGuideClosing] = useState(false);
   
   // State for homepage content
   const [trending, setTrending] = useState<SearchResult[]>([]);
@@ -365,8 +366,28 @@ const App: React.FC = () => {
     setLinkUpdateStatus('idle');
   };
 
+  const closeGuideWithAnimation = useCallback(() => {
+    if (isGuideClosing) return; // Prevent re-trigger
+    setIsGuideClosing(true);
+    setTimeout(() => {
+        abortControllerRef.current?.abort();
+        setSubmittedQuery('');
+        setResults([]);
+        setError(null);
+        setHasSearched(false);
+        setSelectedItem(null);
+        setIsLoading(false);
+        setSearchBarKey(Date.now());
+        setView('home');
+        setIsGuideClosing(false); // Reset after view changes
+    }, 500); // Animation duration
+  }, [isGuideClosing]);
 
   const handleGoHome = useCallback(() => {
+    if (view === 'how-to-use') {
+        closeGuideWithAnimation();
+        return;
+    }
     abortControllerRef.current?.abort();
     setSubmittedQuery('');
     setResults([]);
@@ -376,7 +397,7 @@ const App: React.FC = () => {
     setIsLoading(false);
     setSearchBarKey(Date.now());
     setView('home');
-  }, []);
+  }, [view, closeGuideWithAnimation]);
 
   const handleReset = () => {
     setIsResetModalOpen(true);
@@ -532,7 +553,7 @@ const App: React.FC = () => {
                 Quickly find any movie or TV show and generate a direct VidFast streaming link.
             </p>
              <button
-              onClick={() => view === 'how-to-use' ? handleGoHome() : setView('how-to-use')}
+              onClick={() => view === 'how-to-use' ? closeGuideWithAnimation() : setView('how-to-use')}
               className="mt-4 inline-flex items-center text-netflix-red border border-netflix-red/50 rounded-full px-5 py-2 text-md transition-colors hover:bg-netflix-red/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-netflix-red"
             >
               {view === 'how-to-use' ? (
@@ -563,9 +584,9 @@ const App: React.FC = () => {
       )}
 
       <main className="container mx-auto pl-6 pr-2 sm:pl-8 sm:pr-3 lg:pl-12 lg:pr-4 pb-16 min-h-[50vh]">
-        <div key={view} className="animate-fade-in">
+        <div key={view} className={view === 'home' ? "animate-fade-in" : ""}>
           {view === 'how-to-use' ? (
-              <HowToUseGuide onGoBack={() => setView('home')} />
+              <HowToUseGuide onGoBack={closeGuideWithAnimation} isClosing={isGuideClosing} />
           ) : hasSearched ? (
               <div className="mt-8">
                 {renderSearchResults()}
