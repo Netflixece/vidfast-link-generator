@@ -1,4 +1,3 @@
-
 import type { ColorInfo } from './types';
 
 // WARNING: This key is public. For a real application, this should be kept on a server.
@@ -15,10 +14,11 @@ export const DEFAULT_THEME: ColorInfo = { name: 'Netflix Red', hex: '#E50914' };
 
 export const PREDEFINED_THEMES: ColorInfo[] = [
     { name: 'Netflix Red', hex: '#E50914' },
-    { name: 'Ocean Blue', hex: '#00A8E1' },
-    { name: 'Amethyst', hex: '#9B59B6' },
-    { name: 'Emerald', hex: '#3DBB3D' },
+    { name: 'Prime Blue', hex: '#00A8E1' },
+    { name: 'Hulu Green', hex: '#3DBB3D' },
+    { name: 'Muted Gold', hex: '#B8860B' },
     { name: 'Classic White', hex: '#FFFFFF' },
+    { name: 'Amethyst', hex: '#9B59B6' },
 ];
 
 export const CSS_COLORS: ColorInfo[] = [
