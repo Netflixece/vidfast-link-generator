@@ -51,20 +51,22 @@ const ThemeModal: React.FC<ThemeModalProps> = ({ isOpen, onClose, currentTheme, 
                 {/* Content */}
                 <div className="p-6 flex-grow overflow-y-auto">
                     {/* Current Theme */}
-                    <div className="mb-8 flex items-center space-x-3">
-                        <h3 className="text-lg font-semibold text-neutral-300 flex-shrink-0">Current Theme:</h3>
-                        <div 
-                            className="w-7 h-7 rounded-full flex-shrink-0 border-2 border-white/20"
-                            style={{ backgroundColor: currentTheme.hex, border: currentTheme.hex === '#FFFFFF' ? '1px solid #4A5568' : 'none' }}
-                        />
-                        <p className="font-semibold text-white truncate">{currentTheme.name}</p>
-                        <p className="text-sm text-neutral-400 font-mono">{currentTheme.hex}</p>
+                    <div className="mb-8 flex flex-col items-center justify-center space-y-2">
+                        <h3 className="text-xl font-semibold text-white">Current Theme</h3>
+                        <div className="flex items-center space-x-3">
+                            <div 
+                                className="w-7 h-7 rounded-full flex-shrink-0 border-2 border-white/20"
+                                style={{ backgroundColor: currentTheme.hex, border: currentTheme.hex === '#FFFFFF' ? '1px solid #4A5568' : 'none' }}
+                            />
+                            <p className="font-semibold text-white truncate">{currentTheme.name}</p>
+                            <p className="text-sm text-neutral-400 font-mono">{currentTheme.hex}</p>
+                        </div>
                     </div>
 
                     {/* Predefined Themes */}
                     <div className="mb-8">
-                        <h3 className="text-lg font-semibold text-neutral-300 mb-4">Presets</h3>
-                        <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 text-center">
+                        <h3 className="text-xl font-semibold text-white mb-4 text-center">Presets</h3>
+                        <div className="grid grid-cols-3 gap-2 text-center">
                             {PREDEFINED_THEMES.map(theme => {
                                 const presetName = presetNameOverrides[theme.hex.toUpperCase()] || theme.name;
                                 return (
@@ -79,7 +81,7 @@ const ThemeModal: React.FC<ThemeModalProps> = ({ isOpen, onClose, currentTheme, 
                                         className={`w-10 h-10 rounded-full transition-transform transform hover:scale-110 ${currentTheme.hex === theme.hex ? 'ring-2 ring-white' : ''}`}
                                         style={{ backgroundColor: theme.hex, border: theme.hex === '#FFFFFF' ? '1px solid #4A5568' : 'none' }}
                                     />
-                                    <span className="text-xs font-semibold text-white truncate w-full">{presetName}</span>
+                                    <span className="text-sm font-semibold text-white truncate w-full">{presetName}</span>
                                     <span className="text-xs text-neutral-400 font-mono">{theme.hex}</span>
                                 </button>
                                 )
@@ -89,13 +91,13 @@ const ThemeModal: React.FC<ThemeModalProps> = ({ isOpen, onClose, currentTheme, 
 
                     {/* Custom Color Search */}
                     <div>
-                        <h3 className="text-lg font-semibold text-neutral-300 mb-3">Custom Color</h3>
+                        <h3 className="text-xl font-semibold text-white mb-3 text-center">Custom Color</h3>
                         <input
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search by name or hex code (e.g., SkyBlue or #87CEEB)"
-                            className="w-full pl-4 pr-4 py-2 text-base bg-neutral-800 text-white border-2 border-neutral-700 rounded-full focus:outline-none focus:ring-2 focus:ring-netflix-red focus:border-netflix-red transition-colors"
+                            className="w-full px-4 py-2 text-base bg-neutral-800 text-white border-2 border-neutral-700 rounded-full focus:outline-none focus:ring-2 focus:ring-netflix-red focus:border-netflix-red transition-colors placeholder:text-center"
                         />
                     </div>
                      {searchQuery.trim() && (
