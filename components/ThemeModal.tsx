@@ -1,16 +1,17 @@
+
 import React, { useState, useMemo } from 'react';
 import type { ColorInfo } from '../types';
 import { CloseIcon } from './Icons';
 import { PREDEFINED_THEMES, CSS_COLORS } from '../constants';
+import { useAppContext } from '../contexts/AppContext';
 
 interface ThemeModalProps {
     isOpen: boolean;
     onClose: () => void;
-    currentTheme: ColorInfo;
-    onThemeChange: (theme: ColorInfo) => void;
 }
 
-const ThemeModal: React.FC<ThemeModalProps> = ({ isOpen, onClose, currentTheme, onThemeChange }) => {
+const ThemeModal: React.FC<ThemeModalProps> = ({ isOpen, onClose }) => {
+    const { playerTheme: currentTheme, setPlayerTheme: onThemeChange } = useAppContext();
     const [searchQuery, setSearchQuery] = useState('');
 
     const filteredColors = useMemo(() => {
