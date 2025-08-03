@@ -11,7 +11,7 @@ const HowToUseGuide: React.FC<HowToUseGuideProps> = ({ onGoBack, isClosing }) =>
     const animationClass = isClosing ? 'animate-genie-out' : 'animate-genie-in';
     
     return (
-        <div className={`max-w-6xl mx-auto my-6 bg-neutral-900/50 p-10 rounded-lg relative origin-top ${animationClass}`}>
+        <div className={`max-w-6xl mx-auto my-6 bg-neutral-900/50 p-10 rounded-lg relative origin-[50%_-10rem] ${animationClass}`}>
             <h2 className="text-4xl font-bold text-netflix-red mb-6 text-center">Guide to Use This Site</h2>
             
             <section className="mb-8">
