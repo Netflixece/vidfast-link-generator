@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react';
 import type { SearchResult, TVDetails, WatchProgress, SeasonDetails } from '../types';
 import { getTvDetails, getSeasonDetails, getImages } from '../services/tmdb';
 import { VIDFAST_MOVIE_URL, VIDFAST_TV_URL, TMDB_IMAGE_BASE_URL } from '../constants';
-import { CloseIcon, CopyIcon, ExternalLinkIcon, TrashIcon, BookmarkIcon, SpinnerIcon } from './Icons';
+import { CloseIcon, CopyIcon, ExternalLinkIcon, TrashIcon, BookmarkIcon, SpinnerIcon, PlusIcon, CheckStaticIcon } from './Icons';
 import { useAppContext } from '../contexts/AppContext';
 
 interface EmbedLinkModalProps {
@@ -15,7 +15,7 @@ interface EmbedLinkModalProps {
 }
 
 const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onUpdateFromLink, initialProgress }) => {
-  const { saveItem, removeItem, playerTheme, continueWatchingList } = useAppContext();
+  const { saveItem, removeItem, playerTheme, continueWatchingList, myList, toggleMyListItem } = useAppContext();
 
   const [tvDetails, setTvDetails] = useState<TVDetails | null>(null);
   const [seasonDetails, setSeasonDetails] = useState<SeasonDetails | null>(null);
@@ -35,6 +35,10 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onUpdate
   const isSaved = useMemo(() => {
     return continueWatchingList.some(i => i.media.id === item.id && i.media.media_type === item.media_type)
   }, [continueWatchingList, item]);
+
+  const isInMyList = useMemo(() => {
+    return myList.some(i => i.media.id === item.id && i.media.media_type === item.media_type)
+  }, [myList, item]);
 
   const isMovie = item.media_type === 'movie';
   const title = isMovie ? item.title : item.name;
@@ -165,6 +169,10 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onUpdate
     setSelectedEpisode(Number(e.target.value));
   };
 
+  const handleToggleMyList = () => {
+    toggleMyListItem(item);
+  };
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50 animate-fade-in-fast" onClick={onClose}>
@@ -211,8 +219,12 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onUpdate
                     <div className="flex flex-col mt-6 space-y-3">
                       <a href={embedLink} target="_blank" rel="noopener noreferrer" onClick={handleOpenAndSave} className="w-full flex items-center justify-center bg-netflix-red hover:bg-netflix-red-dark text-white font-bold py-3 px-4 rounded-md transition-colors text-center">
                         <BookmarkIcon className="w-5 h-5 mr-2 flex-shrink-0" />
-                        Open Link in New Tab & Save to Continue Watching
+                        Open Link & Save to Continue Watching
                       </a>
+                      <button onClick={handleToggleMyList} className={`w-full flex items-center justify-center font-bold py-3 px-4 rounded-md transition-colors text-center ${isInMyList ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-neutral-700 hover:bg-neutral-600 text-white'}`}>
+                          {isInMyList ? <CheckStaticIcon className="w-5 h-5 mr-2 flex-shrink-0" /> : <PlusIcon className="w-5 h-5 mr-2 flex-shrink-0" />}
+                          {isInMyList ? 'Added to My List' : 'Add to My List'}
+                      </button>
                       <a href={embedLink} target="_blank" rel="noopener noreferrer" className="w-full flex items-center justify-center bg-neutral-700 hover:bg-neutral-600 text-white font-bold py-3 px-4 rounded-md transition-colors text-center">
                         <ExternalLinkIcon className="w-5 h-5 mr-2 flex-shrink-0" />
                         Open Link in New Tab (without saving)
@@ -380,6 +392,11 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onUpdate
                           <BookmarkIcon className="w-5 h-5 mr-2 flex-shrink-0" />
                           Open & Save to Continue Watching
                         </a>
+
+                        <button onClick={handleToggleMyList} className={`w-full flex items-center justify-center font-bold py-3 px-4 rounded-md transition-colors text-center text-sm ${isInMyList ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-neutral-700 hover:bg-neutral-600 text-white'}`}>
+                            {isInMyList ? <CheckStaticIcon className="w-5 h-5 mr-2 flex-shrink-0" /> : <PlusIcon className="w-5 h-5 mr-2 flex-shrink-0" />}
+                            {isInMyList ? 'Added to My List' : 'Add to My List'}
+                        </button>
                         
                         <a
                           href={embedLink}
