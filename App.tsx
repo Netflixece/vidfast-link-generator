@@ -1,5 +1,4 @@
 
-
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import SearchBar from './components/SearchBar';
 import ResultsGrid from './components/ResultsGrid';
@@ -25,6 +24,7 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const App: React.FC = () => {
   const {
     continueWatchingList,
+    myList,
     playerTheme,
     feedbackMessage,
     saveItem,
@@ -161,7 +161,8 @@ const App: React.FC = () => {
   }, []);
 
   const handleSelectFromSearch = (item: SearchResult) => {
-    setSelectedProgress(undefined);
+    const continueWatchingItem = continueWatchingList.find(cw => cw.media.id === item.id && cw.media.media_type === item.media_type);
+    setSelectedProgress(continueWatchingItem?.progress);
     setSelectedItem(item);
   };
 
@@ -451,17 +452,18 @@ const App: React.FC = () => {
         return (
             <div className="mt-4">
                 <ContinueWatchingGrid onSelect={handleSelectFromContinueWatching} />
+                <div className="space-y-4">
+                    {myList.length > 0 && <ContentCarousel title="My List" items={myList.map(i => i.media)} onSelect={handleSelectFromSearch} />}
+                    {trending.length > 0 && <ContentCarousel title="Trending This Week" items={trending} onSelect={handleSelectFromSearch} />}
+                    {popularMovies.length > 0 && <ContentCarousel title="Popular Movies" items={popularMovies} onSelect={handleSelectFromSearch} />}
+                    {topRatedTv.length > 0 && <ContentCarousel title="Top Rated TV Shows" items={topRatedTv} onSelect={handleSelectFromSearch} />}
+                </div>
                 <UpdateFromLink
                     value={linkInputValue}
                     onChange={handleLinkInputChange}
                     status={linkUpdateStatus}
                     isFadingOut={isLinkFadingOut}
                 />
-                <div className="space-y-4">
-                    {trending.length > 0 && <ContentCarousel title="Trending This Week" items={trending} onSelect={handleSelectFromSearch} />}
-                    {popularMovies.length > 0 && <ContentCarousel title="Popular Movies" items={popularMovies} onSelect={handleSelectFromSearch} />}
-                    {topRatedTv.length > 0 && <ContentCarousel title="Top Rated TV Shows" items={topRatedTv} onSelect={handleSelectFromSearch} />}
-                </div>
             </div>
         );
     } else {
@@ -487,6 +489,7 @@ const App: React.FC = () => {
                     />
                 </div>
                 <div className="space-y-4">
+                    {myList.length > 0 && <ContentCarousel title="My List" items={myList.map(i => i.media)} onSelect={handleSelectFromSearch} />}
                     {trending.length > 0 && <ContentCarousel title="Trending This Week" items={trending} onSelect={handleSelectFromSearch} />}
                     {popularMovies.length > 0 && <ContentCarousel title="Popular Movies" items={popularMovies} onSelect={handleSelectFromSearch} />}
                     {topRatedTv.length > 0 && <ContentCarousel title="Top Rated TV Shows" items={topRatedTv} onSelect={handleSelectFromSearch} />}
