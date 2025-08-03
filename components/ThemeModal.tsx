@@ -37,7 +37,7 @@ const ThemeModal: React.FC<ThemeModalProps> = ({ isOpen, onClose, currentTheme, 
             >
                 {/* Header */}
                 <div className="p-6 flex justify-center items-center border-b border-neutral-700/50 flex-shrink-0 relative">
-                    <h2 className="text-2xl font-bold">Player Theme</h2>
+                    <h2 className="text-2xl font-bold animated-title">Player Theme</h2>
                     <button onClick={onClose} className="absolute top-1/2 right-6 -translate-y-1/2 text-neutral-500 hover:text-white transition-colors">
                         <CloseIcon className="w-6 h-6" />
                     </button>
