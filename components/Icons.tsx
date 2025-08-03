@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 
 export const SearchIcon = ({ className }: { className?: string }) => (
@@ -159,12 +160,11 @@ export const ArrowUpIcon = ({ className }: { className?: string }) => (
 );
 
 export const PaletteIcon = ({ className }: { className?: string }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <circle cx="13.5" cy="6.5" r="2.5"></circle>
-        <circle cx="17.5" cy="10.5" r="2.5"></circle>
-        <circle cx="8.5" cy="7.5" r="2.5"></circle>
-        <circle cx="6.5" cy="12.5" r="2.5"></circle>
-        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.667 0-.422-.02-.833-.052-1.222"></path>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill="none" strokeLinecap="round" strokeLinejoin="round" className={className}>
+       <path d="M12 21a9 9 0 1 1 0 -18a9 8 0 0 1 9 8a4.5 4 0 0 1 -4.5 4h-2.5a2 2 0 0 0 -1 3.75a1.3 1.3 0 0 1 -1 2.25" />
+       <circle cx="7.5" cy="10.5" r=".75" fill="currentColor" strokeWidth="0" />
+       <circle cx="12" cy="7.5" r=".75" fill="currentColor" strokeWidth="0" />
+       <circle cx="16.5" cy="10.5" r=".75" fill="currentColor" strokeWidth="0" />
     </svg>
 );
 
