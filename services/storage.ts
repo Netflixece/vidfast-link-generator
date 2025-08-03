@@ -1,8 +1,10 @@
 
-import type { WatchProgressItem, SearchResult, WatchProgress, ColorInfo } from '../types';
+
+import type { WatchProgressItem, SearchResult, WatchProgress, ColorInfo, MyListItem } from '../types';
 import { DEFAULT_THEME } from '../constants';
 
 const STORAGE_KEY = 'vidfast_continue_watching';
+const MY_LIST_STORAGE_KEY = 'vidfast_my_list';
 const THEME_STORAGE_KEY = 'vidfast_player_theme';
 
 
@@ -46,6 +48,40 @@ export const removeFromContinueWatching = (id: number, media_type: 'movie' | 'tv
     let list = getContinueWatchingList();
     list = list.filter(i => !(i.media.id === id && i.media.media_type === media_type));
     localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+};
+
+export const getMyList = (): MyListItem[] => {
+    try {
+        const rawData = localStorage.getItem(MY_LIST_STORAGE_KEY);
+        if (!rawData) return [];
+        const items: MyListItem[] = JSON.parse(rawData);
+        return items.sort((a, b) => b.savedAt - a.savedAt);
+    } catch (error) {
+        console.error("Failed to parse My List from localStorage", error);
+        return [];
+    }
+};
+
+export const saveToMyList = (item: SearchResult): void => {
+    const list = getMyList();
+    const existingIndex = list.findIndex(i => i.media.id === item.id && i.media.media_type === item.media_type);
+
+    if (existingIndex > -1) {
+        return; 
+    }
+
+    const newItem: MyListItem = {
+        media: item,
+        savedAt: Date.now(),
+    };
+    list.unshift(newItem);
+    localStorage.setItem(MY_LIST_STORAGE_KEY, JSON.stringify(list.sort((a,b) => b.savedAt - a.savedAt)));
+};
+
+export const removeFromMyList = (id: number, media_type: 'movie' | 'tv'): void => {
+    let list = getMyList();
+    list = list.filter(i => !(i.media.id === id && i.media.media_type === media_type));
+    localStorage.setItem(MY_LIST_STORAGE_KEY, JSON.stringify(list));
 };
 
 export const exportContinueWatchingList = () => {
@@ -137,5 +173,6 @@ export const setPlayerTheme = (theme: ColorInfo): void => {
 
 export const resetSiteData = (): void => {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(MY_LIST_STORAGE_KEY);
     localStorage.removeItem(THEME_STORAGE_KEY);
 };
