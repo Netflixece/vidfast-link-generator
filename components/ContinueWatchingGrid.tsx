@@ -1,17 +1,17 @@
 
+
 import React, { useRef, useState, useLayoutEffect } from 'react';
 import type { WatchProgressItem } from '../types';
 import ContinueWatchingCard from './ContinueWatchingCard';
 import { ChevronLeftIcon, ChevronRightIcon } from './Icons';
+import { useAppContext } from '../contexts/AppContext';
 
 interface ContinueWatchingGridProps {
-  items: WatchProgressItem[];
   onSelect: (item: WatchProgressItem) => void;
-  onRemove: (id: number, media_type: 'movie' | 'tv') => void;
-  playerTheme: string;
 }
 
-const ContinueWatchingGrid: React.FC<ContinueWatchingGridProps> = ({ items, onSelect, onRemove, playerTheme }) => {
+const ContinueWatchingGrid: React.FC<ContinueWatchingGridProps> = ({ onSelect }) => {
+  const { continueWatchingList: items } = useAppContext();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showArrows, setShowArrows] = useState(false);
 
@@ -54,7 +54,7 @@ const ContinueWatchingGrid: React.FC<ContinueWatchingGridProps> = ({ items, onSe
         <div className="relative group/nav">
             <button
                 onClick={() => scroll('left')}
-                className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 bg-black/60 backdrop-blur-sm text-white rounded-full p-2 hover:bg-white/20 transition-all opacity-0 disabled:opacity-0 ${showArrows ? 'group-hover/nav:opacity-100' : 'pointer-events-none'}`}
+                className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-full z-20 bg-black/60 backdrop-blur-sm text-white rounded-full p-2 hover:bg-white/20 transition-all opacity-0 disabled:opacity-0 ${showArrows ? 'group-hover/nav:opacity-100' : 'pointer-events-none'}`}
                 aria-label="Scroll left"
                 disabled={!showArrows}
             >
@@ -73,15 +73,13 @@ const ContinueWatchingGrid: React.FC<ContinueWatchingGridProps> = ({ items, onSe
                     <ContinueWatchingCard 
                         item={item} 
                         onSelect={onSelect}
-                        onRemove={onRemove}
-                        playerTheme={playerTheme}
                     />
                 </div>
             ))}
             </div>
             <button
                 onClick={() => scroll('right')}
-                className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-20 bg-black/60 backdrop-blur-sm text-white rounded-full p-2 hover:bg-white/20 transition-all opacity-0 disabled:opacity-0 ${showArrows ? 'group-hover/nav:opacity-100' : 'pointer-events-none'}`}
+                className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-full z-20 bg-black/60 backdrop-blur-sm text-white rounded-full p-2 hover:bg-white/20 transition-all opacity-0 disabled:opacity-0 ${showArrows ? 'group-hover/nav:opacity-100' : 'pointer-events-none'}`}
                 aria-label="Scroll right"
                 disabled={!showArrows}
             >
