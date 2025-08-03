@@ -5,20 +5,18 @@ import type { SearchResult, TVDetails, WatchProgress, SeasonDetails } from '../t
 import { getTvDetails, getSeasonDetails, getImages } from '../services/tmdb';
 import { VIDFAST_MOVIE_URL, VIDFAST_TV_URL, TMDB_IMAGE_BASE_URL } from '../constants';
 import { CloseIcon, CopyIcon, ExternalLinkIcon, TrashIcon, BookmarkIcon, SpinnerIcon } from './Icons';
+import { useAppContext } from '../contexts/AppContext';
 
 interface EmbedLinkModalProps {
   item: SearchResult;
   onClose: () => void;
-  onSave: (item: SearchResult, progress: WatchProgress, cleanPosterPath: string | null) => void;
-  onRemove: (id: number, media_type: 'movie' | 'tv') => void;
   onUpdateFromLink: (url: string) => void;
-  setFeedback: (message: string) => void;
-  isSaved: boolean;
   initialProgress?: WatchProgress;
-  playerTheme: string;
 }
 
-const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onSave, onRemove, onUpdateFromLink, setFeedback, isSaved, initialProgress, playerTheme }) => {
+const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onUpdateFromLink, initialProgress }) => {
+  const { saveItem, removeItem, playerTheme, continueWatchingList } = useAppContext();
+
   const [tvDetails, setTvDetails] = useState<TVDetails | null>(null);
   const [seasonDetails, setSeasonDetails] = useState<SeasonDetails | null>(null);
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
@@ -34,6 +32,9 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onSave, 
   const episodeListRef = useRef<HTMLDivElement>(null);
   const episodeRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  const isSaved = useMemo(() => {
+    return continueWatchingList.some(i => i.media.id === item.id && i.media.media_type === item.media_type)
+  }, [continueWatchingList, item]);
 
   const isMovie = item.media_type === 'movie';
   const title = isMovie ? item.title : item.name;
@@ -122,7 +123,7 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onSave, 
 
 
   const embedLink = useMemo(() => {
-    const themeParam = `&theme=${playerTheme}`;
+    const themeParam = `&theme=${playerTheme.hex.replace('#', '')}`;
     if (item.media_type === 'movie') {
       return `${VIDFAST_MOVIE_URL}${item.id}?autoPlay=true${themeParam}`;
     }
@@ -144,11 +145,11 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onSave, 
     if (cleanPosterPath === null && item.media_type === 'tv') return; // Don't save if poster isn't resolved yet
     const progress: WatchProgress = item.media_type === 'tv' ? { season: selectedSeason, episode: selectedEpisode } : {};
     const posterToSave = item.media_type === 'tv' ? cleanPosterPath : item.poster_path;
-    onSave(item, progress, posterToSave);
+    saveItem(item, progress, posterToSave);
   };
 
   const handleRemove = () => {
-    onRemove(item.id, item.media_type);
+    removeItem(item.id, item.media_type);
     onClose();
   };
   
