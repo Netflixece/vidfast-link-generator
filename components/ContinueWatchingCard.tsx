@@ -3,15 +3,15 @@ import React from 'react';
 import { TMDB_IMAGE_BASE_URL, VIDFAST_MOVIE_URL, VIDFAST_TV_URL } from '../constants';
 import type { WatchProgressItem } from '../types';
 import { TrashIcon, PlayIcon } from './Icons';
+import { useAppContext } from '../contexts/AppContext';
 
 interface ContinueWatchingCardProps {
   item: WatchProgressItem;
   onSelect: (item: WatchProgressItem) => void;
-  onRemove: (id: number, media_type: 'movie' | 'tv') => void;
-  playerTheme: string;
 }
 
-const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({ item, onSelect, onRemove, playerTheme }) => {
+const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({ item, onSelect }) => {
+  const { removeItem, playerTheme } = useAppContext();
   const { media, progress, cleanPosterPath } = item;
   const title = media.media_type === 'movie' ? media.title : media.name;
   
@@ -22,12 +22,12 @@ const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({ item, onSel
 
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onRemove(media.id, media.media_type);
+    removeItem(media.id, media.media_type);
   };
 
   const handlePlayClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const themeParam = `&theme=${playerTheme}`;
+    const themeParam = `&theme=${playerTheme.hex.replace('#', '')}`;
     let link = null;
 
     if (media.media_type === 'movie') {
@@ -55,7 +55,7 @@ const ContinueWatchingCard: React.FC<ContinueWatchingCardProps> = ({ item, onSel
       <img
         src={posterUrl}
         alt={`Poster for ${title}`}
-        className="w-full h-auto object-cover aspect-[2/3] group-hover:scale-105 group-hover:brightness-[.6] transition-all duration-300"
+        className="w-full h-auto object-cover aspect-[2/3] group-hover:scale-105 group-hover:filter group-hover:brightness-50 transition-all duration-300"
         loading="lazy"
       />
       {/* Permanent gradient for text readability */}
