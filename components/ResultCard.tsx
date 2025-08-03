@@ -19,13 +19,13 @@ const ResultCard: React.FC<ResultCardProps> = ({ item, onSelect }) => {
   return (
     <div
       onClick={() => onSelect(item)}
-      className="bg-netflix-dark rounded-md overflow-hidden shadow-lg hover:scale-105 hover:shadow-lg hover:shadow-netflix-red/40 transform transition-all duration-300 cursor-pointer group"
+      className="bg-netflix-dark rounded-md overflow-hidden shadow-lg hover:scale-105 hover:shadow-lg hover:shadow-netflix-red/40 transform transition-all duration-300 cursor-pointer"
     >
       <div className="relative">
         <img
           src={posterUrl}
           alt={`Poster for ${title}`}
-          className="w-full h-auto object-cover aspect-[2/3] group-hover:opacity-75 transition-opacity duration-300"
+          className="w-full h-auto object-cover aspect-[2/3] transition-opacity duration-300"
           loading="lazy"
         />
         <div className="absolute top-2 right-2 p-1.5 bg-black/60 rounded-full text-white">
