@@ -147,6 +147,15 @@
             -webkit-text-fill-color: transparent;
             animation: scroll-gradient 4s linear infinite;
         }
+
+        /* Utility to hide scrollbars */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
     </style>
   <script type="importmap">
 {
