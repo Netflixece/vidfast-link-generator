@@ -32,7 +32,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, item, pro
   return (
     <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-[60] animate-fade-in-fast" onClick={onCancel}>
       <div 
-        className="bg-netflix-dark rounded-xl shadow-2xl w-full text-white animate-zoom-in max-w-4xl h-[500px]"
+        className="bg-netflix-dark rounded-xl shadow-2xl w-full text-white animate-zoom-in max-w-4xl h-[460px]"
         onClick={e => e.stopPropagation()}
       >
         <div className="flex overflow-hidden h-full">
