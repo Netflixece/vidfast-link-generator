@@ -1,3 +1,4 @@
+
 import React, { useRef, useState, useLayoutEffect } from 'react';
 import type { WatchProgressItem } from '../types';
 import ContinueWatchingCard from './ContinueWatchingCard';
@@ -50,10 +51,10 @@ const ContinueWatchingGrid: React.FC<ContinueWatchingGridProps> = ({ items, onSe
   return (
     <div className="mb-8">
         <h2 className="text-2xl font-bold tracking-wider text-white mb-6">Continue Watching</h2>
-        <div className="relative group">
+        <div className="relative group/nav">
             <button
                 onClick={() => scroll('left')}
-                className={`absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-black/60 backdrop-blur-sm text-white rounded-full p-2 hover:bg-white/20 transition-all opacity-0 disabled:opacity-0 ${showArrows ? 'group-hover:opacity-100' : 'pointer-events-none'}`}
+                className={`absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 bg-black/60 backdrop-blur-sm text-white rounded-full p-2 hover:bg-white/20 transition-all opacity-0 disabled:opacity-0 ${showArrows ? 'group-hover/nav:opacity-100' : 'pointer-events-none'}`}
                 aria-label="Scroll left"
                 disabled={!showArrows}
             >
@@ -80,7 +81,7 @@ const ContinueWatchingGrid: React.FC<ContinueWatchingGridProps> = ({ items, onSe
             </div>
             <button
                 onClick={() => scroll('right')}
-                className={`absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-black/60 backdrop-blur-sm text-white rounded-full p-2 hover:bg-white/20 transition-all opacity-0 disabled:opacity-0 ${showArrows ? 'group-hover:opacity-100' : 'pointer-events-none'}`}
+                className={`absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-20 bg-black/60 backdrop-blur-sm text-white rounded-full p-2 hover:bg-white/20 transition-all opacity-0 disabled:opacity-0 ${showArrows ? 'group-hover/nav:opacity-100' : 'pointer-events-none'}`}
                 aria-label="Scroll right"
                 disabled={!showArrows}
             >
