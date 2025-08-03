@@ -15,14 +15,25 @@ import SkeletonGrid from './components/SkeletonGrid';
 import ContentCarousel from './components/ContentCarousel';
 import SkeletonCarousel from './components/SkeletonCarousel';
 import { searchMulti, getTvDetails, getMovieDetails, getSeasonDetails, getImages, getTrending, getPopularMovies, getTopRatedTvShows } from './services/tmdb';
-import { getContinueWatchingList, saveToContinueWatching, removeFromContinueWatching, exportContinueWatchingList, importContinueWatchingList, resetSiteData, getPlayerTheme, setPlayerTheme as savePlayerTheme } from './services/storage';
 import type { SearchResult, WatchProgressItem, WatchProgress, TVSearchResult, Episode, MovieSearchResult, ColorInfo } from './types';
 import { FilmIcon, TvIcon, BookOpenIcon, CloseIcon } from './components/Icons';
-import { DEFAULT_THEME } from './constants';
+import { useAppContext } from './contexts/AppContext';
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const App: React.FC = () => {
+  const {
+    continueWatchingList,
+    playerTheme,
+    feedbackMessage,
+    saveItem,
+    removeItem,
+    setFeedback,
+    exportList,
+    importList,
+    resetData,
+  } = useAppContext();
+
   const [view, setView] = useState<'home' | 'how-to-use'>('home');
   const [submittedQuery, setSubmittedQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -32,8 +43,6 @@ const App: React.FC = () => {
   const [selectedProgress, setSelectedProgress] = useState<WatchProgress | undefined>(undefined);
   const [hasSearched, setHasSearched] = useState(false);
   const [searchBarKey, setSearchBarKey] = useState(Date.now());
-  const [continueWatchingList, setContinueWatchingList] = useState<WatchProgressItem[]>([]);
-  const [feedback, setFeedback] = useState<string | null>(null);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [linkInputValue, setLinkInputValue] = useState('');
   const [linkUpdateStatus, setLinkUpdateStatus] = useState<'idle' | 'loading' | 'success'>('idle');
@@ -41,7 +50,6 @@ const App: React.FC = () => {
   const [isLinkFadingOut, setIsLinkFadingOut] = useState(false);
   const [showScrollToTop, setShowScrollToTop] = useState(false);
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
-  const [playerTheme, setPlayerTheme] = useState<ColorInfo>(DEFAULT_THEME);
   
   // State for homepage content
   const [trending, setTrending] = useState<SearchResult[]>([]);
@@ -66,11 +74,6 @@ const App: React.FC = () => {
     onCancel: () => {},
   });
   const abortControllerRef = useRef<AbortController | null>(null);
-
-  useEffect(() => {
-    setContinueWatchingList(getContinueWatchingList());
-    setPlayerTheme(getPlayerTheme());
-  }, []);
   
   // Fetch homepage content
   useEffect(() => {
@@ -117,18 +120,6 @@ const App: React.FC = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  useEffect(() => {
-    if (feedback) {
-        const timer = setTimeout(() => setFeedback(null), 5000); // Increased duration for better readability
-        return () => clearTimeout(timer);
-    }
-  }, [feedback]);
-
-
-  const refreshContinueWatchingList = () => {
-    setContinueWatchingList(getContinueWatchingList());
-  };
 
   const handleSearch = useCallback(async (query: string) => {
     abortControllerRef.current?.abort();
@@ -185,16 +176,6 @@ const App: React.FC = () => {
 
   const handleCloseConfirmation = () => {
     setConfirmationState({ isOpen: false, itemToAdd: null, progressToAdd: null, episodeDetails: null, onConfirm: () => {}, onCancel: () => {} });
-  };
-
-  const handleSaveProgress = (item: SearchResult, progress: WatchProgress, cleanPosterPath: string | null) => {
-    saveToContinueWatching(item, progress, cleanPosterPath);
-    refreshContinueWatchingList();
-  };
-
-  const handleRemoveProgress = (id: number, media_type: 'movie' | 'tv') => {
-    removeFromContinueWatching(id, media_type);
-    refreshContinueWatchingList();
   };
 
   const fadeAndClearInput = async () => {
@@ -270,8 +251,7 @@ const App: React.FC = () => {
         
         if (itemToUpdate && itemToUpdate.media.media_type === 'tv') {
             const newProgress = { season: Number(season), episode: Number(episode) };
-            saveToContinueWatching(itemToUpdate.media, newProgress, itemToUpdate.cleanPosterPath || itemToUpdate.media.poster_path);
-            refreshContinueWatchingList();
+            saveItem(itemToUpdate.media, newProgress, itemToUpdate.cleanPosterPath || itemToUpdate.media.poster_path);
             showSuccessAndClear(`'${itemToUpdate.media.name}' progress updated to S${newProgress.season} E${newProgress.episode}.`);
         } else {
             try {
@@ -304,8 +284,7 @@ const App: React.FC = () => {
                   progressToAdd: newProgress,
                   episodeDetails: episodeDetails || null,
                   onConfirm: () => {
-                      saveToContinueWatching(newItem, newProgress, posterToSave);
-                      refreshContinueWatchingList();
+                      saveItem(newItem, newProgress, posterToSave);
                       handleCloseConfirmation();
                       showSuccessAndClear(`Added '${tvDetails.name}' to Continue Watching.`);
                   },
@@ -330,8 +309,7 @@ const App: React.FC = () => {
         const itemToUpdate = continueWatchingList.find(i => i.media.id === mediaId && i.media.media_type === 'movie');
 
         if (itemToUpdate && itemToUpdate.media.media_type === 'movie') {
-            saveToContinueWatching(itemToUpdate.media, {}, itemToUpdate.cleanPosterPath || itemToUpdate.media.poster_path); // Resaves to update timestamp
-            refreshContinueWatchingList();
+            saveItem(itemToUpdate.media, {}, itemToUpdate.cleanPosterPath || itemToUpdate.media.poster_path); // Resaves to update timestamp
             showSuccessAndClear(`'${itemToUpdate.media.title}' has been moved to the front of your list.`);
         } else {
             try {
@@ -347,8 +325,7 @@ const App: React.FC = () => {
                   progressToAdd: {},
                   episodeDetails: null,
                   onConfirm: () => {
-                      saveToContinueWatching(movieDetails, {}, posterToSave);
-                      refreshContinueWatchingList();
+                      saveItem(movieDetails, {}, posterToSave);
                       handleCloseConfirmation();
                       showSuccessAndClear(`Added '${movieDetails.title}' to Continue Watching.`);
                   },
@@ -398,43 +375,14 @@ const App: React.FC = () => {
     setView('home');
   }, []);
 
-  const handleExport = () => {
-    exportContinueWatchingList();
-    setFeedback("Continue Watching list exported successfully.");
-  };
-
-  const handleImport = (file: File) => {
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-        const text = e.target?.result;
-        if (typeof text === 'string') {
-            try {
-                await importContinueWatchingList(text);
-                refreshContinueWatchingList();
-                setFeedback("List imported successfully!");
-            } catch (err) {
-                setFeedback(err instanceof Error ? err.message : "Failed to import list.");
-            }
-        }
-    };
-    reader.onerror = () => {
-        setFeedback("Error reading the import file.");
-    };
-    reader.readAsText(file);
-  };
-
   const handleReset = () => {
     setIsResetModalOpen(true);
   };
 
   const handleConfirmReset = () => {
-    resetSiteData();
-    refreshContinueWatchingList();
-    setPlayerTheme(DEFAULT_THEME);
-    savePlayerTheme(DEFAULT_THEME);
+    resetData();
+    // also clear local search state
     setIsResetModalOpen(false);
-    setFeedback("Site has been reset.");
-    // also clear search state
     setResults([]);
     setSubmittedQuery('');
     setHasSearched(false);
@@ -443,17 +391,9 @@ const App: React.FC = () => {
     setSearchBarKey(Date.now());
   };
 
-  const handleThemeChange = (theme: ColorInfo) => {
-    setPlayerTheme(theme);
-    savePlayerTheme(theme);
-    setFeedback(`Player theme changed to ${theme.name}`);
-  };
-
   const handleScrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-  const isItemSelectedAndSaved = selectedItem ? continueWatchingList.some(i => i.media.id === selectedItem.id && i.media.media_type === selectedItem.media_type) : false;
 
   const renderSearchResults = () => {
     if (isLoading && results.length === 0) {
@@ -509,12 +449,7 @@ const App: React.FC = () => {
         // Returning User Layout
         return (
             <div className="mt-4">
-                <ContinueWatchingGrid
-                    items={continueWatchingList}
-                    onSelect={handleSelectFromContinueWatching}
-                    onRemove={handleRemoveProgress}
-                    playerTheme={playerTheme.hex.replace('#', '')}
-                />
+                <ContinueWatchingGrid onSelect={handleSelectFromContinueWatching} />
                 <UpdateFromLink
                     value={linkInputValue}
                     onChange={handleLinkInputChange}
@@ -567,8 +502,8 @@ const App: React.FC = () => {
         <div className="container mx-auto pl-6 pr-2 sm:pl-8 sm:pr-3 lg:pl-12 lg:pr-4 relative">
             <div className="absolute top-4 right-2 sm:right-3 lg:right-12">
                 <ProfileMenu
-                  onImport={handleImport}
-                  onExport={handleExport}
+                  onImport={importList}
+                  onExport={exportList}
                   onReset={handleReset}
                   onThemeSelect={() => setIsThemeModalOpen(true)}
                 />
@@ -640,13 +575,8 @@ const App: React.FC = () => {
         <EmbedLinkModal 
           item={selectedItem} 
           onClose={handleCloseModal}
-          onSave={handleSaveProgress}
-          onRemove={handleRemoveProgress}
           onUpdateFromLink={actuallyUpdateFromLink}
-          setFeedback={setFeedback}
-          isSaved={isItemSelectedAndSaved}
           initialProgress={selectedProgress}
-          playerTheme={playerTheme.hex.replace('#', '')}
         />
       )}
 
@@ -668,18 +598,16 @@ const App: React.FC = () => {
       <ThemeModal
         isOpen={isThemeModalOpen}
         onClose={() => setIsThemeModalOpen(false)}
-        currentTheme={playerTheme}
-        onThemeChange={handleThemeChange}
       />
 
       {showScrollToTop && <ScrollToTopButton onClick={handleScrollToTop} />}
 
-      {feedback && (
+      {feedbackMessage && (
         <div 
             className="fixed bottom-5 right-5 bg-neutral-800 border border-neutral-600 text-white p-4 rounded-lg shadow-2xl z-50 animate-fade-in-up max-w-sm"
             role="alert"
         >
-            {feedback}
+            {feedbackMessage}
         </div>
       )}
     </div>
