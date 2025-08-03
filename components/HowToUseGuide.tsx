@@ -4,11 +4,14 @@ import { SearchIcon, FilmIcon, TvIcon, BookmarkIcon, ExternalLinkIcon, UploadIco
 
 interface HowToUseGuideProps {
     onGoBack: () => void;
+    isClosing?: boolean;
 }
 
-const HowToUseGuide: React.FC<HowToUseGuideProps> = ({ onGoBack }) => {
+const HowToUseGuide: React.FC<HowToUseGuideProps> = ({ onGoBack, isClosing }) => {
+    const animationClass = isClosing ? 'animate-genie-out' : 'animate-genie-in';
+    
     return (
-        <div className="max-w-4xl mx-auto bg-neutral-900/50 p-8 rounded-lg relative">
+        <div className={`max-w-6xl mx-auto my-6 bg-neutral-900/50 p-10 rounded-lg relative origin-top ${animationClass}`}>
             <h2 className="text-4xl font-bold text-netflix-red mb-6 text-center">Guide to Use This Site</h2>
             
             <section className="mb-8">
