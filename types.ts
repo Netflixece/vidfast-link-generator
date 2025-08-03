@@ -65,6 +65,11 @@ export interface WatchProgressItem {
     cleanPosterPath?: string | null;
 }
 
+export interface MyListItem {
+    media: SearchResult;
+    savedAt: number;
+}
+
 export interface Episode {
     id: number;
     episode_number: number;
