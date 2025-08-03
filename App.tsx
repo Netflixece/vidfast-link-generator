@@ -1,4 +1,5 @@
 
+
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import SearchBar from './components/SearchBar';
 import ResultsGrid from './components/ResultsGrid';
@@ -497,7 +498,7 @@ const App: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white overflow-x-hidden">
       <header className="py-8 text-center">
         <div className="container mx-auto pl-6 pr-2 sm:pl-8 sm:pr-3 lg:pl-12 lg:pr-4 relative">
             <div className="absolute top-4 right-2 sm:right-3 lg:right-12">
