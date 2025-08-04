@@ -1,168 +1,27 @@
-
-
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import SearchBar from './components/SearchBar';
-import ResultsGrid from './components/ResultsGrid';
 import EmbedLinkModal from './components/EmbedLinkModal';
-import ContinueWatchingGrid from './components/ContinueWatchingGrid';
-import UpdateFromLink from './components/UpdateFromLink';
 import ConfirmationModal from './components/ConfirmationModal';
 import HowToUseGuide from './components/HowToUseGuide';
-import ProfileMenu from './components/ProfileMenu';
 import ResetConfirmationModal from './components/ResetConfirmationModal';
 import ScrollToTopButton from './components/ScrollToTopButton';
 import ThemeModal from './components/ThemeModal';
-import SkeletonGrid from './components/SkeletonGrid';
-import ContentCarousel from './components/ContentCarousel';
-import SkeletonCarousel from './components/SkeletonCarousel';
-import { searchMulti, getTvDetails, getMovieDetails, getSeasonDetails, getImages, getTrending, getPopularMovies, getTopRatedTvShows, getTopRatedMovies, getUpcomingMovies, getPopularTvShows, getOnTheAirTvShows } from './services/tmdb';
-import type { SearchResult, WatchProgressItem, WatchProgress, TVSearchResult, Episode, MovieSearchResult, ColorInfo } from './types';
-import { FilmIcon, TvIcon, BookOpenIcon, CloseIcon, ChevronLeftIcon } from './components/Icons';
+import AppHeader from './components/AppHeader';
+import HomePage from './pages/HomePage';
+import MoviesPage from './pages/MoviesPage';
+import TvShowsPage from './pages/TvShowsPage';
+import SearchResultsPage from './pages/SearchResultsPage';
+import { searchMulti, getTvDetails, getMovieDetails, getSeasonDetails, getImages } from './services/tmdb';
+import type { SearchResult, WatchProgressItem, WatchProgress, TVSearchResult, Episode } from './types';
 import { useAppContext } from './contexts/AppContext';
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-const MoviesPage = ({ onSelect }) => {
-    const [popular, setPopular] = useState<SearchResult[]>([]);
-    const [topRated, setTopRated] = useState<SearchResult[]>([]);
-    const [upcoming, setUpcoming] = useState<SearchResult[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const controller = new AbortController();
-        const fetchMovies = async () => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const [popularRes, topRatedRes, upcomingRes] = await Promise.all([
-                    getPopularMovies(controller.signal),
-                    getTopRatedMovies(controller.signal),
-                    getUpcomingMovies(controller.signal)
-                ]);
-                if (!controller.signal.aborted) {
-                    setPopular(popularRes);
-                    setTopRated(topRatedRes);
-                    setUpcoming(upcomingRes);
-                }
-            } catch (err) {
-                if (!controller.signal.aborted) {
-                    setError("Could not load movie sections. Please try again later.");
-                }
-            } finally {
-                if (!controller.signal.aborted) setIsLoading(false);
-            }
-        };
-        fetchMovies();
-        return () => controller.abort();
-    }, []);
-
-    const carousels = [
-        { title: "Popular Movies", items: popular },
-        { title: "Top Rated Movies", items: topRated },
-        { title: "Upcoming Movies", items: upcoming },
-    ];
-
-    return (
-        <div className="animate-fade-in">
-            <div className="mb-6">
-                <h2 className="text-4xl font-bold tracking-wider text-white">Movies</h2>
-                <p className="text-neutral-400 mt-1">Browse movies by popular categories.</p>
-            </div>
-            {isLoading && (
-                <div className="mt-4 space-y-4">
-                    <SkeletonCarousel />
-                    <SkeletonCarousel />
-                    <SkeletonCarousel />
-                </div>
-            )}
-            {error && <p className="text-center text-red-400 text-lg py-16" role="alert">{error}</p>}
-            {!isLoading && !error && (
-                <div className="space-y-4">
-                    {carousels.map(carousel => (
-                        <ContentCarousel key={carousel.title} title={carousel.title} items={carousel.items} onSelect={onSelect} />
-                    ))}
-                </div>
-            )}
-        </div>
-    );
-};
-
-const TvShowsPage = ({ onSelect }) => {
-    const [popular, setPopular] = useState<SearchResult[]>([]);
-    const [topRated, setTopRated] = useState<SearchResult[]>([]);
-    const [onTheAir, setOnTheAir] = useState<SearchResult[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const controller = new AbortController();
-        const fetchTvShows = async () => {
-            setIsLoading(true);
-            setError(null);
-            try {
-                const [popularRes, topRatedRes, onTheAirRes] = await Promise.all([
-                    getPopularTvShows(controller.signal),
-                    getTopRatedTvShows(controller.signal),
-                    getOnTheAirTvShows(controller.signal)
-                ]);
-                if (!controller.signal.aborted) {
-                    setPopular(popularRes);
-                    setTopRated(topRatedRes);
-                    setOnTheAir(onTheAirRes);
-                }
-            } catch (err) {
-                if (!controller.signal.aborted) {
-                    setError("Could not load TV show sections. Please try again later.");
-                }
-            } finally {
-                if (!controller.signal.aborted) setIsLoading(false);
-            }
-        };
-        fetchTvShows();
-        return () => controller.abort();
-    }, []);
-
-    const carousels = [
-        { title: "Popular TV Shows", items: popular },
-        { title: "Top Rated TV Shows", items: topRated },
-        { title: "Currently On The Air", items: onTheAir },
-    ];
-
-    return (
-        <div className="animate-fade-in">
-            <div className="mb-6">
-                <h2 className="text-4xl font-bold tracking-wider text-white">TV Shows</h2>
-                <p className="text-neutral-400 mt-1">Browse TV shows by popular categories.</p>
-            </div>
-            {isLoading && (
-                <div className="mt-4 space-y-4">
-                    <SkeletonCarousel />
-                    <SkeletonCarousel />
-                    <SkeletonCarousel />
-                </div>
-            )}
-            {error && <p className="text-center text-red-400 text-lg py-16" role="alert">{error}</p>}
-            {!isLoading && !error && (
-                <div className="space-y-4">
-                    {carousels.map(carousel => (
-                        <ContentCarousel key={carousel.title} title={carousel.title} items={carousel.items} onSelect={onSelect} />
-                    ))}
-                </div>
-            )}
-        </div>
-    );
-};
-
 const App: React.FC = () => {
   const {
     continueWatchingList,
-    myList,
-    playerTheme,
     feedbackMessage,
     saveItem,
-    removeItem,
-    toggleMyListItem,
     setFeedback,
     exportList,
     importList,
@@ -187,13 +46,6 @@ const App: React.FC = () => {
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false);
   const [isGuideClosing, setIsGuideClosing] = useState(false);
   
-  // State for homepage content
-  const [trending, setTrending] = useState<SearchResult[]>([]);
-  const [popularMovies, setPopularMovies] = useState<SearchResult[]>([]);
-  const [topRatedTv, setTopRatedTv] = useState<SearchResult[]>([]);
-  const [isHomepageLoading, setIsHomepageLoading] = useState(true);
-  const [homepageError, setHomepageError] = useState<string | null>(null);
-
   const [confirmationState, setConfirmationState] = useState<{
     isOpen: boolean;
     itemToAdd: SearchResult | null;
@@ -210,41 +62,6 @@ const App: React.FC = () => {
     onCancel: () => {},
   });
   const abortControllerRef = useRef<AbortController | null>(null);
-  
-  // Fetch homepage content
-  useEffect(() => {
-    if (view !== 'home' || hasSearched) return;
-    const controller = new AbortController();
-    const fetchHomepageContent = async () => {
-        setIsHomepageLoading(true);
-        setHomepageError(null);
-        try {
-            const [trendingRes, popularMoviesRes, topRatedTvRes] = await Promise.all([
-                getTrending(controller.signal),
-                getPopularMovies(controller.signal),
-                getTopRatedTvShows(controller.signal)
-            ]);
-            if (!controller.signal.aborted) {
-                setTrending(trendingRes);
-                setPopularMovies(popularMoviesRes);
-                setTopRatedTv(topRatedTvRes);
-            }
-        } catch (err) {
-            if (!controller.signal.aborted) {
-                console.error("Failed to fetch homepage content:", err);
-                setHomepageError("Could not load discovery sections. Please try again later.");
-            }
-        } finally {
-            if (!controller.signal.aborted) {
-                setIsHomepageLoading(false);
-            }
-        }
-    };
-
-    fetchHomepageContent();
-    
-    return () => controller.abort();
-  }, [view, hasSearched]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -552,188 +369,63 @@ const App: React.FC = () => {
   const handleScrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-  const renderSearchResults = () => {
-    if (isLoading && results.length === 0) {
-      return (
-        <>
-          <h2 className="text-2xl tracking-wider text-neutral-400 mb-6">Searching for "{submittedQuery}"...</h2>
-          <SkeletonGrid />
-        </>
-      );
+  
+  const handleToggleGuide = () => {
+    if (view === 'how-to-use') {
+        closeGuideWithAnimation();
+    } else {
+        setView('how-to-use');
     }
-
-    if (!isLoading && error) {
-      return <p className="text-center text-red-400 text-lg py-16" role="alert">{error}</p>;
-    }
-
-    if (results.length > 0) {
-      return (
-        <>
-          <h2 className="text-2xl tracking-wider text-white mb-6">Results for "{submittedQuery}"</h2>
-          <ResultsGrid results={results} onSelect={handleSelectFromSearch} />
-        </>
-      );
-    }
-
-    if (!isLoading && !error && hasSearched && results.length === 0) {
-      return (
-        <div className="text-center text-neutral-500 text-lg py-16">
-          <p>No results found for "{submittedQuery}".</p>
-          <p className="text-md text-neutral-600 mt-2">Try checking the spelling or searching for a different title.</p>
-        </div>
-      );
-    }
-    
-    return null;
   };
 
-  const CategoryButtons = () => (
-    <div className="my-10 flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in">
-        <button
-            onClick={() => handleSelectCategory('movies')}
-            className="group flex items-center justify-center w-64 h-24 bg-neutral-900/50 border-2 border-neutral-800 rounded-lg text-white text-2xl font-bold hover:bg-neutral-800 hover:border-netflix-red transition-all duration-300 transform hover:scale-105"
-        >
-            <FilmIcon className="w-8 h-8 mr-4 text-neutral-400 group-hover:text-netflix-red transition-colors" />
-            Movies
-        </button>
-        <button
-            onClick={() => handleSelectCategory('tv-shows')}
-            className="group flex items-center justify-center w-64 h-24 bg-neutral-900/50 border-2 border-neutral-800 rounded-lg text-white text-2xl font-bold hover:bg-neutral-800 hover:border-netflix-red transition-all duration-300 transform hover:scale-105"
-        >
-            <TvIcon className="w-8 h-8 mr-4 text-neutral-400 group-hover:text-netflix-red transition-colors" />
-            TV Shows
-        </button>
-    </div>
-  );
-
-  const renderHomepageContent = () => {
-    if (isHomepageLoading) {
-        return (
-            <div className="mt-4 space-y-4">
-                <SkeletonCarousel />
-                <SkeletonCarousel />
-                <SkeletonCarousel />
-            </div>
-        );
-    }
-
-    if (homepageError) {
-        return <p className="text-center text-red-400 text-lg py-16" role="alert">{homepageError}</p>;
-    }
-
-    if (continueWatchingList.length > 0) {
-        // Returning User Layout
-        return (
-            <div className="mt-4">
-                <ContinueWatchingGrid onSelect={handleSelectFromContinueWatching} />
-                <UpdateFromLink
-                    value={linkInputValue}
-                    onChange={handleLinkInputChange}
-                    status={linkUpdateStatus}
-                    isFadingOut={isLinkFadingOut}
-                />
-                <CategoryButtons />
-                <div className="space-y-4">
-                    {myList.length > 0 && <ContentCarousel title="My List" items={myList.map(i => i.media)} onSelect={handleSelectFromSearch} onRemoveItem={toggleMyListItem} />}
-                    {trending.length > 0 && <ContentCarousel title="Trending This Week" items={trending} onSelect={handleSelectFromSearch} />}
-                    {popularMovies.length > 0 && <ContentCarousel title="Popular Movies" items={popularMovies} onSelect={handleSelectFromSearch} />}
-                    {topRatedTv.length > 0 && <ContentCarousel title="Top Rated TV Shows" items={topRatedTv} onSelect={handleSelectFromSearch} />}
-                </div>
-            </div>
-        );
-    } else {
-        // New User Layout
-        return (
-            <div className="mt-4">
-                <div className="max-w-4xl mx-auto bg-neutral-900/40 border border-neutral-800 rounded-2xl p-8 md:p-12 my-8 text-center animate-fade-in">
-                    <div className="flex justify-center items-center space-x-4 text-neutral-800 mb-8">
-                        <FilmIcon className="w-16 h-16 opacity-80 -rotate-12"/>
-                        <TvIcon className="w-20 h-20 opacity-90 rotate-6"/>
-                    </div>
-                    <h2 className="text-4xl font-bold mb-3 text-white">Welcome to VidFast</h2>
-                    <div className="mb-8">
-                        <p className="text-xl font-medium text-neutral-100">Your list is currently empty.</p>
-                        <p className="text-lg text-neutral-400 mt-2">Get started by searching, browsing the sections below, or pasting a VidFast link to add to your list.</p>
-                    </div>
-                    <UpdateFromLink
-                        value={linkInputValue}
-                        onChange={handleLinkInputChange}
-                        status={linkUpdateStatus}
-                        isFadingOut={isLinkFadingOut}
-                        variant="compact"
+  const renderContent = () => {
+    switch(view) {
+        case 'movies':
+            return <MoviesPage onSelect={handleSelectFromSearch} />;
+        case 'tv-shows':
+            return <TvShowsPage onSelect={handleSelectFromSearch} />;
+        case 'how-to-use':
+             return <HowToUseGuide onGoBack={closeGuideWithAnimation} isClosing={isGuideClosing} />;
+        case 'home':
+        default:
+            return hasSearched ? (
+                <div className="mt-8">
+                    <SearchResultsPage 
+                        submittedQuery={submittedQuery}
+                        results={results}
+                        isLoading={isLoading}
+                        error={error}
+                        onSelect={handleSelectFromSearch}
                     />
                 </div>
-                <CategoryButtons />
-                <div className="space-y-4">
-                    {myList.length > 0 && <ContentCarousel title="My List" items={myList.map(i => i.media)} onSelect={handleSelectFromSearch} onRemoveItem={toggleMyListItem} />}
-                    {trending.length > 0 && <ContentCarousel title="Trending This Week" items={trending} onSelect={handleSelectFromSearch} />}
-                    {popularMovies.length > 0 && <ContentCarousel title="Popular Movies" items={popularMovies} onSelect={handleSelectFromSearch} />}
-                    {topRatedTv.length > 0 && <ContentCarousel title="Top Rated TV Shows" items={topRatedTv} onSelect={handleSelectFromSearch} />}
-                </div>
-            </div>
-        );
+            ) : (
+                <HomePage 
+                    onSelectCategory={handleSelectCategory}
+                    onSelect={handleSelectFromSearch}
+                    onSelectFromContinueWatching={handleSelectFromContinueWatching}
+                    linkProps={{
+                        value: linkInputValue,
+                        onChange: handleLinkInputChange,
+                        status: linkUpdateStatus,
+                        isFadingOut: isLinkFadingOut,
+                    }}
+                />
+            );
     }
   };
 
 
   return (
     <div className="min-h-screen bg-black text-white overflow-x-hidden">
-      <header className="py-8 text-center">
-        <div className="container mx-auto pl-6 pr-2 sm:pl-8 sm:pr-3 lg:pl-12 lg:pr-4 relative">
-            {(view === 'movies' || view === 'tv-shows') && (
-                <button
-                    onClick={handleGoHome}
-                    className="absolute left-20 top-1/2 -translate-y-1/2 w-14 h-14 flex items-center justify-center bg-netflix-red hover:bg-netflix-red-dark rounded-full text-white transition-colors z-10 animate-fade-in"
-                    aria-label="Go back to homepage"
-                >
-                    <ChevronLeftIcon className="w-10 h-10" />
-                </button>
-            )}
-            <div className="absolute top-4 right-2 sm:right-3 lg:right-12">
-                <ProfileMenu
-                  onImport={importList}
-                  onExport={exportList}
-                  onReset={handleReset}
-                  onThemeSelect={() => setIsThemeModalOpen(true)}
-                />
-            </div>
-            <h1
-              className="text-6xl md:text-7xl font-bold text-netflix-red uppercase cursor-pointer hover:text-netflix-red-dark transition-colors duration-300"
-              onClick={handleGoHome}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  handleGoHome();
-                }
-              }}
-              tabIndex={0}
-              role="button"
-              aria-label="VidFast Link Generator, Go to homepage"
-            >
-              VidFast Link Generator
-            </h1>
-            <p className="text-lg text-neutral-400 max-w-2xl mx-auto mt-2">
-                Quickly find any movie or TV show and generate a direct VidFast streaming link.
-            </p>
-             <button
-              onClick={() => view === 'how-to-use' ? closeGuideWithAnimation() : setView('how-to-use')}
-              className="mt-4 inline-flex items-center text-netflix-red border border-netflix-red/50 rounded-full px-5 py-2 text-md transition-colors hover:bg-netflix-red/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-netflix-red"
-            >
-              {view === 'how-to-use' ? (
-                  <>
-                    <CloseIcon className="w-5 h-5 mr-2" />
-                    Close Guide
-                  </>
-              ) : (
-                  <>
-                    <BookOpenIcon className="w-5 h-5 mr-2" />
-                    Guide to use this site
-                  </>
-              )}
-            </button>
-        </div>
-      </header>
+      <AppHeader
+        view={view}
+        onGoHome={handleGoHome}
+        onToggleGuide={handleToggleGuide}
+        onImport={importList}
+        onExport={exportList}
+        onReset={handleReset}
+        onThemeSelect={() => setIsThemeModalOpen(true)}
+      />
       
       {view === 'home' && (
         <div className="sticky top-0 z-10 py-4 bg-black/80 backdrop-blur-sm">
@@ -748,25 +440,7 @@ const App: React.FC = () => {
       )}
 
       <main className="container mx-auto pl-6 pr-2 sm:pl-8 sm:pr-3 lg:pl-12 lg:pr-4 pb-16 min-h-[50vh]">
-        {(() => {
-            switch(view) {
-                case 'movies':
-                    return <MoviesPage onSelect={handleSelectFromSearch} />;
-                case 'tv-shows':
-                    return <TvShowsPage onSelect={handleSelectFromSearch} />;
-                case 'how-to-use':
-                     return <HowToUseGuide onGoBack={closeGuideWithAnimation} isClosing={isGuideClosing} />;
-                case 'home':
-                default:
-                    return hasSearched ? (
-                        <div className="mt-8">
-                            {renderSearchResults()}
-                        </div>
-                    ) : (
-                        renderHomepageContent()
-                    );
-            }
-        })()}
+        {renderContent()}
       </main>
 
       {selectedItem && (
