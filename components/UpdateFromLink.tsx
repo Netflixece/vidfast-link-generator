@@ -1,7 +1,7 @@
 import React from 'react';
 import { SpinnerIcon, CheckIcon } from './Icons';
 
-interface UpdateFromLinkProps {
+export interface UpdateFromLinkProps {
     value: string;
     onChange: (url: string) => void;
     status: 'idle' | 'loading' | 'success';
