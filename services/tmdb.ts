@@ -1,3 +1,4 @@
+
 import { TMDB_API_KEY, TMDB_API_BASE_URL } from '../constants';
 import type { TMDBResponse, SearchResult, TVDetails, MovieSearchResult, SeasonDetails, ImagesResponse, TVSearchResult } from '../types';
 
@@ -33,13 +34,32 @@ export const getTrending = async (signal?: AbortSignal): Promise<SearchResult[]>
 
 export const getPopularMovies = async (signal?: AbortSignal): Promise<MovieSearchResult[]> => {
     const data = await fetchFromTMDB('/movie/popular', {}, signal);
-    // Popular movies endpoint doesn't include media_type, so we add it manually.
     return data.results.map((movie: any) => ({ ...movie, media_type: 'movie' }));
+};
+
+export const getTopRatedMovies = async (signal?: AbortSignal): Promise<MovieSearchResult[]> => {
+    const data = await fetchFromTMDB('/movie/top_rated', {}, signal);
+    return data.results.map((movie: any) => ({ ...movie, media_type: 'movie' }));
+};
+
+export const getUpcomingMovies = async (signal?: AbortSignal): Promise<MovieSearchResult[]> => {
+    const data = await fetchFromTMDB('/movie/upcoming', {}, signal);
+    return data.results.map((movie: any) => ({ ...movie, media_type: 'movie' }));
+};
+
+
+export const getPopularTvShows = async (signal?: AbortSignal): Promise<TVSearchResult[]> => {
+    const data = await fetchFromTMDB('/tv/popular', {}, signal);
+    return data.results.map((tvShow: any) => ({ ...tvShow, media_type: 'tv' }));
 };
 
 export const getTopRatedTvShows = async (signal?: AbortSignal): Promise<TVSearchResult[]> => {
     const data = await fetchFromTMDB('/tv/top_rated', {}, signal);
-    // Top-rated TV endpoint doesn't include media_type, so we add it manually.
+    return data.results.map((tvShow: any) => ({ ...tvShow, media_type: 'tv' }));
+};
+
+export const getOnTheAirTvShows = async (signal?: AbortSignal): Promise<TVSearchResult[]> => {
+    const data = await fetchFromTMDB('/tv/on_the_air', {}, signal);
     return data.results.map((tvShow: any) => ({ ...tvShow, media_type: 'tv' }));
 };
 
