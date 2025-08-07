@@ -1,4 +1,5 @@
 
+
 import React, { useRef, useState, useLayoutEffect, useMemo } from 'react';
 import type { WatchProgressItem } from '../types';
 import ContinueWatchingCard from './ContinueWatchingCard';
@@ -69,11 +70,11 @@ const ContinueWatchingGrid: React.FC<ContinueWatchingGridProps> = ({ onSelect })
 
   return (
     <div className="mb-8">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
             <h2 className="text-2xl font-bold tracking-wider text-white">Continue Watching</h2>
             {items.length > 0 && (
-                <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-center gap-4">
+                    <div className="flex items-center gap-2 flex-wrap justify-center">
                         <FilterIcon className="w-5 h-5 text-neutral-400" />
                         <button onClick={() => setFilter('all')} className={`px-3 py-1 text-sm rounded-full transition-colors ${filter === 'all' ? 'bg-netflix-red text-white font-bold' : 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700'}`}>All</button>
                         <button onClick={() => setFilter('movie')} className={`px-3 py-1 text-sm rounded-full transition-colors ${filter === 'movie' ? 'bg-netflix-red text-white font-bold' : 'bg-neutral-800 text-neutral-300 hover:bg-neutral-700'}`}>Movies</button>
