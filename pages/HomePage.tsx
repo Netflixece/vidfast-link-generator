@@ -19,14 +19,14 @@ const CategoryButtons: React.FC<{onSelectCategory: (category: 'movies' | 'tv-sho
     <div className="my-10 flex flex-col sm:flex-row items-center justify-center gap-6 animate-fade-in">
         <button
             onClick={() => onSelectCategory('movies')}
-            className="group flex items-center justify-center w-64 h-24 bg-neutral-900/50 border-2 border-neutral-800 rounded-lg text-white text-2xl font-bold hover:bg-neutral-800 hover:border-netflix-red transition-all duration-300 transform hover:scale-105"
+            className="group flex items-center justify-center w-full sm:w-64 h-24 bg-neutral-900/50 border-2 border-neutral-800 rounded-lg text-white text-2xl font-bold hover:bg-neutral-800 hover:border-netflix-red transition-all duration-300 transform hover:scale-105"
         >
             <FilmIcon className="w-8 h-8 mr-4 text-neutral-400 group-hover:text-netflix-red transition-colors" />
             Movies
         </button>
         <button
             onClick={() => onSelectCategory('tv-shows')}
-            className="group flex items-center justify-center w-64 h-24 bg-neutral-900/50 border-2 border-neutral-800 rounded-lg text-white text-2xl font-bold hover:bg-neutral-800 hover:border-netflix-red transition-all duration-300 transform hover:scale-105"
+            className="group flex items-center justify-center w-full sm:w-64 h-24 bg-neutral-900/50 border-2 border-neutral-800 rounded-lg text-white text-2xl font-bold hover:bg-neutral-800 hover:border-netflix-red transition-all duration-300 transform hover:scale-105"
         >
             <TvIcon className="w-8 h-8 mr-4 text-neutral-400 group-hover:text-netflix-red transition-colors" />
             TV Shows
@@ -109,12 +109,12 @@ const HomePage: React.FC<HomePageProps> = ({ onSelectCategory, onSelect, onSelec
         // New User Layout
         return (
             <div className="mt-4">
-                <div className="max-w-4xl mx-auto bg-neutral-900/40 border border-neutral-800 rounded-2xl p-8 md:p-12 my-8 text-center animate-fade-in">
+                <div className="max-w-4xl mx-auto bg-neutral-900/40 border border-neutral-800 rounded-2xl p-6 md:p-12 my-8 text-center animate-fade-in">
                     <div className="flex justify-center items-center space-x-4 text-neutral-800 mb-8">
                         <FilmIcon className="w-16 h-16 opacity-80 -rotate-12"/>
                         <TvIcon className="w-20 h-20 opacity-90 rotate-6"/>
                     </div>
-                    <h2 className="text-4xl font-bold mb-3 text-white">Welcome to VidFast</h2>
+                    <h2 className="text-3xl sm:text-4xl font-bold mb-3 text-white">Welcome to VidFast</h2>
                     <div className="mb-8">
                         <p className="text-xl font-medium text-neutral-100">Your list is currently empty.</p>
                         <p className="text-lg text-neutral-400 mt-2">Get started by searching, browsing the sections below, or pasting a VidFast link to add to your list.</p>
