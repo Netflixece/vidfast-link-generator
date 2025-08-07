@@ -80,7 +80,6 @@ const App: React.FC = () => {
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
-    setView('home'); // always return to home view for search
     setSubmittedQuery(query);
 
     if (!query.trim()) {
@@ -350,6 +349,16 @@ const App: React.FC = () => {
     setView('home');
   }, [view, closeGuideWithAnimation]);
 
+  const handleClearSearch = useCallback(() => {
+    abortControllerRef.current?.abort();
+    setSubmittedQuery('');
+    setResults([]);
+    setError(null);
+    setHasSearched(false);
+    setIsLoading(false);
+    setSearchBarKey(Date.now());
+  }, []);
+
   const handleReset = () => {
     setIsResetModalOpen(true);
   };
@@ -379,6 +388,20 @@ const App: React.FC = () => {
   };
 
   const renderContent = () => {
+    if (hasSearched) {
+        return (
+            <div className="mt-8">
+                <SearchResultsPage 
+                    submittedQuery={submittedQuery}
+                    results={results}
+                    isLoading={isLoading}
+                    error={error}
+                    onSelect={handleSelectFromSearch}
+                />
+            </div>
+        );
+    }
+
     switch(view) {
         case 'movies':
             return <MoviesPage onSelect={handleSelectFromSearch} />;
@@ -388,17 +411,7 @@ const App: React.FC = () => {
              return <HowToUseGuide onGoBack={closeGuideWithAnimation} isClosing={isGuideClosing} />;
         case 'home':
         default:
-            return hasSearched ? (
-                <div className="mt-8">
-                    <SearchResultsPage 
-                        submittedQuery={submittedQuery}
-                        results={results}
-                        isLoading={isLoading}
-                        error={error}
-                        onSelect={handleSelectFromSearch}
-                    />
-                </div>
-            ) : (
+            return (
                 <HomePage 
                     onSelectCategory={handleSelectCategory}
                     onSelect={handleSelectFromSearch}
@@ -425,20 +438,13 @@ const App: React.FC = () => {
         onExport={exportList}
         onReset={handleReset}
         onThemeSelect={() => setIsThemeModalOpen(true)}
+        onSearch={handleSearch}
+        isLoading={isLoading}
+        searchBarKey={searchBarKey}
+        hasSearched={hasSearched}
+        onClearSearch={handleClearSearch}
       />
       
-      {view === 'home' && (
-        <div className="sticky top-0 z-10 py-4 bg-black/80 backdrop-blur-sm">
-            <div className="container mx-auto pl-6 pr-2 sm:pl-8 sm:pr-3 lg:pl-12 lg:pr-4">
-            <SearchBar 
-                key={searchBarKey}
-                onSearch={handleSearch} 
-                isLoading={isLoading} 
-            />
-            </div>
-        </div>
-      )}
-
       <main className="container mx-auto pl-6 pr-2 sm:pl-8 sm:pr-3 lg:pl-12 lg:pr-4 pb-16 min-h-[50vh]">
         {renderContent()}
       </main>
