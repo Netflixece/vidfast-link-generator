@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { SearchIcon, FilmIcon, TvIcon, BookmarkIcon, ExternalLinkIcon, UploadIcon, PaletteIcon } from './Icons';
 
@@ -11,25 +12,25 @@ const HowToUseGuide: React.FC<HowToUseGuideProps> = ({ onGoBack, isClosing }) =>
     const animationClass = isClosing ? 'animate-genie-out' : 'animate-genie-in';
     
     return (
-        <div className={`max-w-6xl mx-auto my-6 bg-neutral-900/50 p-10 rounded-lg relative origin-[50%_-10rem] ${animationClass}`}>
-            <h2 className="text-4xl font-bold text-netflix-red mb-6 text-center">Guide to Use This Site</h2>
+        <div className={`max-w-6xl mx-auto my-6 bg-neutral-900/50 p-4 sm:p-10 rounded-lg relative origin-[50%_-10rem] ${animationClass}`}>
+            <h2 className="text-3xl sm:text-4xl font-bold text-netflix-red mb-6 text-center">Guide to Use This Site</h2>
             
             <section className="mb-8">
-                <h3 className="text-2xl font-bold mb-3 flex items-center">
+                <h3 className="text-xl sm:text-2xl font-bold mb-3 flex items-center">
                     <SearchIcon className="w-6 h-6 mr-3 text-netflix-red"/>
                     1. Search for Content
                 </h3>
-                <p className="text-neutral-300 ml-9">
+                <p className="text-neutral-300 ml-0 sm:ml-9">
                     Use the search bar at the top of the page to find any movie or TV show. As you type, results will appear below. Just click on a poster to get started.
                 </p>
             </section>
             
             <section className="mb-8">
-                <h3 className="text-2xl font-bold mb-3 flex items-center">
+                <h3 className="text-xl sm:text-2xl font-bold mb-3 flex items-center">
                     <ExternalLinkIcon className="w-6 h-6 mr-3 text-netflix-red"/>
                     2. Generate Your Link
                 </h3>
-                <div className="ml-9 space-y-4">
+                <div className="ml-0 sm:ml-9 space-y-4">
                     <div className="bg-neutral-800 p-4 rounded-lg">
                         <h4 className="font-semibold text-lg flex items-center mb-2"><FilmIcon className="w-5 h-5 mr-2"/>For Movies</h4>
                         <p className="text-neutral-300">
@@ -46,14 +47,14 @@ const HowToUseGuide: React.FC<HowToUseGuideProps> = ({ onGoBack, isClosing }) =>
             </section>
 
             <section className="mb-8">
-                <h3 className="text-2xl font-bold mb-3 flex items-center">
+                <h3 className="text-xl sm:text-2xl font-bold mb-3 flex items-center">
                     <BookmarkIcon className="w-6 h-6 mr-3 text-netflix-red"/>
                     3. Save Your Progress
                 </h3>
-                <p className="text-neutral-300 ml-9 mb-4">
+                <p className="text-neutral-300 ml-0 sm:ml-9 mb-4">
                     Tired of bookmarking links or forgetting which episode you were on? We've got you covered.
                 </p>
-                <div className="ml-9 bg-neutral-800 p-4 rounded-lg">
+                <div className="ml-0 sm:ml-9 bg-neutral-800 p-4 rounded-lg">
                     <p className="flex items-center text-white font-semibold mb-2">
                         <BookmarkIcon className="w-5 h-5 mr-2"/>
                         Open Link in New Tab & Save to Continue Watching
@@ -62,7 +63,7 @@ const HowToUseGuide: React.FC<HowToUseGuideProps> = ({ onGoBack, isClosing }) =>
                         Clicking this button opens the streaming link and adds the item to your "Continue Watching" list on the homepage. For TV shows, it saves the specific season and episode you selected.
                     </p>
                 </div>
-                 <div className="ml-9 bg-neutral-800 p-4 rounded-lg mt-4">
+                 <div className="ml-0 sm:ml-9 bg-neutral-800 p-4 rounded-lg mt-4">
                     <p className="flex items-center text-white font-semibold mb-2">
                         <ExternalLinkIcon className="w-5 h-5 mr-2"/>
                         Open Link in New Tab (without saving to Continue Watching)
@@ -74,11 +75,11 @@ const HowToUseGuide: React.FC<HowToUseGuideProps> = ({ onGoBack, isClosing }) =>
             </section>
 
             <section className="mb-8">
-                <h3 className="text-2xl font-bold mb-3 flex items-center">
+                <h3 className="text-xl sm:text-2xl font-bold mb-3 flex items-center">
                     <UploadIcon className="w-6 h-6 mr-3 text-netflix-red"/>
                     4. Update from a Link
                 </h3>
-                <div className="ml-9 text-neutral-300 space-y-2">
+                <div className="ml-0 sm:ml-9 text-neutral-300 space-y-2">
                    <p>
                         The "Add or Update from Link" tool on the homepage is powerful. Paste any VidFast movie or episode link here.
                    </p>
@@ -90,11 +91,11 @@ const HowToUseGuide: React.FC<HowToUseGuideProps> = ({ onGoBack, isClosing }) =>
             </section>
 
             <section className="mb-8">
-                <h3 className="text-2xl font-bold mb-3 flex items-center">
+                <h3 className="text-xl sm:text-2xl font-bold mb-3 flex items-center">
                     <PaletteIcon className="w-6 h-6 mr-3 text-netflix-red"/>
                     5. Customize Your Player Theme
                 </h3>
-                <p className="text-neutral-300 ml-9">
+                <p className="text-neutral-300 ml-0 sm:ml-9">
                     Personalize your viewing experience by changing the theme color of the VidFast player. Access the theme selector via the profile menu in the top-right corner. You can choose from presets or search for any color you like.
                 </p>
             </section>
