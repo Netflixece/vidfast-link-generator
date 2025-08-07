@@ -50,11 +50,7 @@ const MoviesPage: React.FC<MoviesPageProps> = ({ onSelect }) => {
     ];
 
     return (
-        <div className="animate-fade-in">
-            <div className="mb-6">
-                <h2 className="text-4xl font-bold tracking-wider text-white">Movies</h2>
-                <p className="text-neutral-400 mt-1">Browse movies by popular categories.</p>
-            </div>
+        <div className="animate-fade-in pt-6">
             {isLoading && (
                 <div className="mt-4 space-y-4">
                     <SkeletonCarousel />
