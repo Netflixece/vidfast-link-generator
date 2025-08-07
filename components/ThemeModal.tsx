@@ -1,4 +1,5 @@
 
+
 import React, { useState, useMemo } from 'react';
 import type { ColorInfo } from '../types';
 import { CloseIcon } from './Icons';
@@ -33,7 +34,7 @@ const ThemeModal: React.FC<ThemeModalProps> = ({ isOpen, onClose }) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50 animate-fade-in-fast" onClick={onClose}>
             <div
-                className="bg-netflix-dark rounded-xl shadow-2xl w-full max-w-2xl text-white animate-zoom-in flex flex-col h-[90vh] max-h-[700px]"
+                className="bg-netflix-dark rounded-xl shadow-2xl w-full max-w-2xl text-white animate-zoom-in flex flex-col h-full sm:h-[90vh] sm:max-h-[700px]"
                 onClick={e => e.stopPropagation()}
             >
                 {/* Header */}
@@ -66,15 +67,15 @@ const ThemeModal: React.FC<ThemeModalProps> = ({ isOpen, onClose }) => {
                     {/* Predefined Themes */}
                     <div className="px-6 py-6">
                         <h3 className="text-xl font-semibold text-white mb-4 text-center">Presets</h3>
-                        <div className="flex justify-center">
-                            <div className="inline-grid grid-cols-3 gap-x-8 gap-y-6 text-center">
+                        <div className="flex justify-center pb-4">
+                            <div className="inline-grid grid-cols-3 gap-x-4 gap-y-5 sm:gap-x-8 sm:gap-y-6 text-center">
                                 {PREDEFINED_THEMES.map(theme => {
                                     return (
                                     <button
                                         key={theme.hex}
                                         title={theme.name}
                                         onClick={() => handleSelectTheme(theme)}
-                                        className="flex flex-col items-center space-y-2 rounded-lg transition-colors hover:bg-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-netflix-dark focus:ring-netflix-red w-28"
+                                        className="flex flex-col items-center space-y-2 rounded-lg transition-colors hover:bg-neutral-700/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-netflix-dark focus:ring-netflix-red w-24 sm:w-28"
                                         aria-label={`Select ${theme.name} theme`}
                                     >
                                         <div
