@@ -39,7 +39,7 @@ const MainHeaderContent: React.FC<Pick<AppHeaderProps, 'view' | 'onGoHome' | 'on
             </div>
             
             <h1
-                className="text-6xl md:text-7xl font-bold text-netflix-red uppercase cursor-pointer hover:text-netflix-red-dark transition-colors duration-300"
+                className="text-4xl sm:text-6xl lg:text-7xl font-bold text-netflix-red uppercase cursor-pointer hover:text-netflix-red-dark transition-colors duration-300"
                 onClick={onGoHome}
                 onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
@@ -53,12 +53,12 @@ const MainHeaderContent: React.FC<Pick<AppHeaderProps, 'view' | 'onGoHome' | 'on
             >
                 VidFast Link Generator
             </h1>
-            <p className="text-lg text-neutral-400 max-w-2xl mx-auto mt-2">
+            <p className="text-base sm:text-lg text-neutral-400 max-w-2xl mx-auto mt-2 px-2">
                 Quickly find any movie or TV show and generate a direct VidFast streaming link.
             </p>
             <button
                 onClick={onToggleGuide}
-                className="mt-4 inline-flex items-center text-netflix-red border border-netflix-red/50 rounded-full px-5 py-2 text-md transition-colors hover:bg-netflix-red/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-netflix-red"
+                className="mt-4 inline-flex items-center text-netflix-red border border-netflix-red/50 rounded-full px-4 py-2 text-sm sm:px-5 sm:text-md transition-colors hover:bg-netflix-red/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-netflix-red"
             >
                 {view === 'how-to-use' ? (
                     <>
@@ -106,10 +106,10 @@ const AppHeader: React.FC<AppHeaderProps> = (props) => {
             <div className="container mx-auto pl-6 pr-2 sm:pl-8 sm:pr-3 lg:pl-12 lg:pr-4 flex items-center gap-4">
                 <button
                     onClick={hasSearched ? onClearSearch : onGoHome}
-                    className="w-14 h-14 flex-shrink-0 flex items-center justify-center bg-netflix-red hover:bg-netflix-red-dark rounded-full text-white transition-colors z-10 animate-fade-in"
+                    className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 flex items-center justify-center bg-netflix-red hover:bg-netflix-red-dark rounded-full text-white transition-colors z-10 animate-fade-in"
                     aria-label={hasSearched ? "Back to category page" : "Go back to homepage"}
                 >
-                    <ChevronLeftIcon className="w-10 h-10" />
+                    <ChevronLeftIcon className="w-8 h-8 sm:w-10 sm:h-10" />
                 </button>
                 <div className="flex-grow">
                     <SearchBar 
