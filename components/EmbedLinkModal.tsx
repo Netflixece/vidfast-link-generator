@@ -175,25 +175,25 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onUpdate
 
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50 animate-fade-in-fast" onClick={onClose}>
+    <div className="fixed inset-0 bg-black bg-opacity-80 flex items-start md:items-center justify-center p-0 md:p-4 z-50 animate-fade-in-fast overflow-y-auto" onClick={onClose}>
       <div 
-        className={`bg-netflix-dark rounded-xl shadow-2xl w-full text-white animate-zoom-in flex relative ${isMovie ? 'max-w-4xl flex-row' : 'max-w-6xl flex-row h-[90vh] max-h-[800px]'}`} 
+        className={`bg-netflix-dark md:rounded-xl shadow-2xl w-full text-white animate-zoom-in flex flex-col md:flex-row relative ${isMovie ? 'md:max-w-4xl' : 'md:max-w-6xl md:h-[90vh] md:max-h-[800px]'}`} 
         onClick={e => e.stopPropagation()}
       >
         {isMovie ? (
           <>
             {/* MOVIE LAYOUT */}
-            <div className="w-1/3 flex-shrink-0 bg-black">
-              <img src={posterUrl} alt={`Poster for ${title}`} className="w-full h-full object-cover rounded-l-xl"/>
+            <div className="w-full h-64 md:h-auto md:w-1/3 flex-shrink-0 bg-black">
+              <img src={posterUrl} alt={`Poster for ${title}`} className="w-full h-full object-cover md:rounded-l-xl"/>
             </div>
-            <div className="w-2/3 p-6 flex flex-col">
+            <div className="w-full md:w-2/3 p-6 flex flex-col overflow-y-auto">
               <button onClick={onClose} className="absolute top-3 right-3 z-10 text-neutral-500 hover:text-white transition-colors bg-black/30 rounded-full p-1">
                 <CloseIcon className="w-6 h-6" />
               </button>
               {/* Details Section */}
               <div className="flex-grow mb-6 flex flex-col min-h-0">
                 <div className="flex justify-between items-start flex-shrink-0">
-                  <h2 className="text-3xl font-bold mb-2 pr-8">{title}</h2>
+                  <h2 className="text-2xl sm:text-3xl font-bold mb-2 pr-8">{title}</h2>
                 </div>
                 {item.release_date && (
                   <p className="text-md text-neutral-400 mb-4 flex-shrink-0">
@@ -246,17 +246,17 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onUpdate
         ) : (
           <>
             {/* TV SHOW LAYOUT - REDESIGNED */}
-            <button onClick={onClose} className="absolute top-3 right-3 z-10 text-neutral-500 hover:text-white transition-colors bg-black/30 rounded-full p-1">
+            <button onClick={onClose} className="absolute top-3 right-3 z-30 text-neutral-500 hover:text-white transition-colors bg-black/30 rounded-full p-1">
               <CloseIcon className="w-6 h-6" />
             </button>
             {/* Left Pane: Show Info */}
-            <div className="w-1/3 flex-shrink-0 bg-black/30 flex flex-col">
-              <div className="relative h-2/3">
+            <div className="w-full md:w-1/3 flex-shrink-0 bg-black/30 flex flex-col">
+              <div className="relative h-64 sm:h-80 md:h-2/3 flex-shrink-0">
                 <img src={cleanPosterPath ? `${TMDB_IMAGE_BASE_URL}${cleanPosterPath}` : posterUrl} alt={`Poster for ${title}`} className="w-full h-full object-cover"/>
                 <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent"></div>
               </div>
               <div className="p-5 flex-grow flex flex-col min-h-0">
-                <h2 className="text-3xl font-bold mb-2">{title}</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold mb-2">{title}</h2>
                 {item.first_air_date && (
                   <p className="text-sm text-neutral-400 mb-3 flex-shrink-0">
                     First Aired: {new Date(item.first_air_date).getFullYear()}
@@ -269,17 +269,17 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onUpdate
             </div>
 
             {/* Right Pane: Episodes & Actions */}
-            <div className="w-2/3 flex flex-col bg-neutral-900/50">
+            <div className="w-full md:w-2/3 flex flex-col bg-neutral-900/50 md:overflow-hidden">
                {/* Top: Season & Episode Selectors */}
-              <div className="p-4 flex-shrink-0 border-b border-neutral-800/70">
+              <div className="p-3 sm:p-4 flex-shrink-0 border-b border-neutral-800/70">
                 {isLoadingDetails && <div className="text-center p-2">Loading...</div>}
                 {error && <div className="text-center p-2 text-red-400">{error}</div>}
                 {tvDetails && (
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pr-10">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pr-10">
                     {availableSeasons.length > 0 ? (
                       <>
-                        <div className="flex items-center space-x-2 w-full sm:w-auto flex-1 min-w-0">
-                          <label htmlFor="season" className="text-lg font-bold text-neutral-300 flex-shrink-0">Season</label>
+                        <div className="flex items-center gap-2 w-full sm:w-auto flex-1 min-w-0">
+                          <label htmlFor="season" className="text-base sm:text-lg font-bold text-neutral-300 flex-shrink-0">Season</label>
                           <select
                             id="season"
                             value={selectedSeason}
@@ -293,8 +293,8 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onUpdate
                             ))}
                           </select>
                         </div>
-                         <div className="flex items-center space-x-2 w-full sm:w-auto flex-1 min-w-0">
-                          <label htmlFor="episode" className="text-lg font-bold text-neutral-300 flex-shrink-0">Episode</label>
+                         <div className="flex items-center gap-2 w-full sm:w-auto flex-1 min-w-0">
+                          <label htmlFor="episode" className="text-base sm:text-lg font-bold text-neutral-300 flex-shrink-0">Episode</label>
                           <select
                             id="episode"
                             value={selectedEpisode}
@@ -318,7 +318,7 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onUpdate
               </div>
               
               {/* Middle: Episode List (scrollable) */}
-              <div ref={episodeListRef} className="flex-grow overflow-y-auto p-4 space-y-3">
+              <div ref={episodeListRef} className="flex-grow overflow-y-auto p-2 sm:p-4 space-y-2 sm:space-y-3">
                 {isLoadingSeason && <div className="flex items-center justify-center h-full"><SpinnerIcon className="w-8 h-8 text-netflix-red" /></div>}
                 {seasonError && <div className="text-center p-4 text-red-400">{seasonError}</div>}
                 {seasonDetails && !isLoadingSeason && !seasonDetails.episodes.length && (
@@ -363,7 +363,7 @@ const EmbedLinkModal: React.FC<EmbedLinkModalProps> = ({ item, onClose, onUpdate
               </div>
 
               {/* Bottom: Actions */}
-              <div className="p-4 flex-shrink-0 border-t border-neutral-800/70 bg-netflix-dark/50">
+              <div className="p-3 sm:p-4 flex-shrink-0 border-t border-neutral-800/70 bg-netflix-dark/50">
                 {embedLink ? (
                   <div>
                     <div className="flex items-center space-x-2 mb-4">
