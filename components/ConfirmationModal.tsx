@@ -32,14 +32,14 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, item, pro
   return (
     <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-[60] animate-fade-in-fast" onClick={onCancel}>
       <div 
-        className="bg-netflix-dark rounded-xl shadow-2xl w-full text-white animate-zoom-in max-w-4xl h-[460px]"
+        className="bg-netflix-dark rounded-xl shadow-2xl w-full text-white animate-zoom-in max-w-4xl md:h-auto"
         onClick={e => e.stopPropagation()}
       >
-        <div className="flex overflow-hidden h-full">
-            <div className="w-1/3 flex-shrink-0 bg-black">
+        <div className="flex flex-col md:flex-row overflow-hidden md:h-[460px]">
+            <div className="w-full h-48 md:h-full md:w-1/3 flex-shrink-0 bg-black">
                 <img src={posterUrl} alt={`Poster for ${title}`} className="w-full h-full object-cover" />
             </div>
-            <div className="w-2/3 p-6 flex flex-col bg-neutral-900/50">
+            <div className="w-full md:w-2/3 p-6 flex flex-col bg-neutral-900/50 overflow-y-auto">
                 {/* Details Section */}
                 <div className="flex-grow flex flex-col min-h-0">
                     {isTVEpisode ? (
